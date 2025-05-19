@@ -5,9 +5,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import HomeLayout from './layouts/HomeLayout';
 import HomePage from './pages/HomePage';
-import ChatPage from './pages/ChatPage';
+import ChatPage from './pages/Chat';
 import NotFoundPage from './pages/error';
-
+import ChatLayout from './layouts/ChatLayout';
 
 const publicRoutes: RouteObject[] = [
   {
@@ -16,7 +16,14 @@ const publicRoutes: RouteObject[] = [
     errorElement: <NotFoundPage/>,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'chat', element: <ChatPage /> },
+      {
+        path: 'chat',
+        element: <ChatLayout />,
+        children: [
+          { index: true, element: <ChatPage /> }, // /chat
+          // { path: ':roomId', element: <ChatRoomPage /> } // 추후 확장 가능
+        ],
+      },
     ],
   },
 ];
