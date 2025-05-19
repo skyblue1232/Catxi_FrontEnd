@@ -30,16 +30,8 @@ module.exports = {
           light: "#FFF4EA",
         },
       },
-      fontSize: {
-        small: "0.75rem",
-        medium: "1rem",
-        large: "1.25rem",
-      },
       fontFamily: {
-        regular: ["Pretendard-Regular", "sans-serif"],
-        medium: ["Pretendard-Medium", "sans-serif"],
-        semiBold: ["Pretendard-SemiBold", "sans-serif"],
-        bold: ["Pretendard-Bold", "sans-serif"],
+        pretendard: ['Pretendard', 'sans-serif'],
       },
     },
   },
