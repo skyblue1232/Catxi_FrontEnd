@@ -17,17 +17,17 @@ export default defineConfig({
         name: "CATXI | 대학교 택시 스팟",
         icons: [
           {
-            src: "icon.png",
+            src: "/icon.png",
             sizes: "64x64",
             type: "image/png"
           },
           {
-            src: "icon2.png",
+            src: "/icon2.png",
             type: "image/png",
             sizes: "192x192"
           },
           {
-            src: "icon3.png",
+            src: "/icon3.png",
             type: "image/png",
             sizes: "512x512"
           }
@@ -40,7 +40,7 @@ export default defineConfig({
       workbox: {
         globPatterns: [
           'index.html',
-          'manifest.json',
+          'manifest.webmanifest',
           '**/*.{js,css,ico,png,svg}'
         ],
         runtimeCaching: [
