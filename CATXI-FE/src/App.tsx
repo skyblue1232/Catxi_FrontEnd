@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import HomeLayout from './layouts/HomeLayout';
 import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
-import NotFoundPage from './pages/Error';
+import NotFoundPage from './pages/error';
 
 
 const publicRoutes: RouteObject[] = [
@@ -34,12 +34,11 @@ export const queryClient = new QueryClient({
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="w-full bg-background min-h-screen">
+      <div className="w-full bg-background min-h-screen font-pretendard">
         <RouterProvider router={router} />
       </div>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>
-    
+    </QueryClientProvider>    
   )
 }
 
