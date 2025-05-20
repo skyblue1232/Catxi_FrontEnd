@@ -25,3 +25,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CATXI_UNIVERSITY_TAXI_B0936 }}
           channelId: live
           projectId: catxi-university-taxi-b0936
+          entryPoint: .  
