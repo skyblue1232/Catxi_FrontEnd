@@ -6,7 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import HomeLayout from './layouts/HomeLayout';
 import HomePage from './pages/HomePage';
 import ChatPage from './pages/Chat';
-import NotFoundPage from './pages/error';
+import NotFoundPage from './pages/Error';
 import ChatLayout from './layouts/ChatLayout';
 
 const publicRoutes: RouteObject[] = [
