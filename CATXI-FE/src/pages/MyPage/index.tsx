@@ -1,4 +1,4 @@
-import RecordCard from "./_components/recordCard";
+import RecordCard from "./_components/RecordCard";
 
 const MyPage = () => {
   return (
