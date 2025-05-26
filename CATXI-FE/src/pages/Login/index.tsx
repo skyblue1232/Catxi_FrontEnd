@@ -70,7 +70,7 @@ export const Login = () => {
         <button
           disabled={!id || !pwd}
           className={clsx(
-            "w-full py-4 rounded-md text-lg text-white cursor-pointer",
+            "w-full py-4 rounded-md text-lg text-[#FAFAFA] cursor-pointer",
             !id || !pwd ? "bg-gray-400 cursor-not-allowed" : "bg-[#7424F5]"
           )}
           onClick={handleLogin}

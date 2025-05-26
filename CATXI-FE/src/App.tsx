@@ -10,6 +10,8 @@ import NotFoundPage from "./pages/Error";
 import ChatLayout from "./layouts/ChatLayout";
 import { Login } from "./pages/Login";
 import SignIn from "./pages/SiginIn";
+import CreateChat from "./pages/CreateChat";
+import MyPage from "./pages/MyPage";
 
 const publicRoutes: RouteObject[] = [
   {
@@ -28,6 +30,8 @@ const publicRoutes: RouteObject[] = [
       },
       { path: "login", element: <Login /> },
       { path: "signIn", element: <SignIn /> },
+      { path: "createChat", element: <CreateChat /> },
+      { path: "myPage", element: <MyPage /> },
     ],
   },
 ];
