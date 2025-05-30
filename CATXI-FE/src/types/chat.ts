@@ -1,4 +1,5 @@
 export interface ChatMessage {
   content: string;
-  isMe: boolean;
+  sender: number;
+  timestamp: string;
 }
