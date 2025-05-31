@@ -1,10 +1,19 @@
+import { useNavigate } from 'react-router-dom';
+import Float from '../../../assets/icons/Float.svg?react';
+
 const FloatingButton = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/createChat');
+  };
+  
   return (
     <button
-      className="fixed bottom-8 right-8 bg-purple-600 text-white w-12 h-12 rounded-full shadow-lg text-2xl flex items-center justify-center"
-      onClick={() => alert('추가 기능 준비중')}
+      className="fixed bottom-[1.25rem] right-[1.688rem] bg-[#7424F5] text-white w-[3.75rem] h-[3.75rem] rounded-full shadow-lg flex items-center justify-center"
+      onClick={handleClick}
     >
-      +
+      <Float />
     </button>
   );
 };
