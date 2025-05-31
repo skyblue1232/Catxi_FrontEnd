@@ -21,7 +21,7 @@ const publicRoutes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       {
-        path: "chat",
+        path: "chat/:roomId",
         element: <ChatLayout />,
         children: [
           { index: true, element: <ChatPage /> }, // /chat
