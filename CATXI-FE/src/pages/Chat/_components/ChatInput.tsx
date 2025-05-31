@@ -5,7 +5,7 @@ interface Props {
 }
 
 const ChatInput = ({ value, onChange, onSubmit }: Props) => (
-  <div className="flex items-center border border-gray-300 rounded-full px-3.5 py-3">
+  <div className="flex mb-[3.75rem] items-center border border-gray-300 rounded-full px-3.5 py-3">
     <input
       value={value}
       onChange={(e) => onChange(e.target.value)}
