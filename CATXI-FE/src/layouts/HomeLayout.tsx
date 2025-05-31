@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
+import TabBar from "../components/Tab/TabBar";
 
-const MainLayout = () => {
+const HomeLayout = () => {
   return (
     <div 
       className="
@@ -11,8 +12,9 @@ const MainLayout = () => {
         flex-col 
         ">
       <Outlet />
+      <TabBar />
     </div>
   );
 };
 
-export default MainLayout;
+export default HomeLayout;

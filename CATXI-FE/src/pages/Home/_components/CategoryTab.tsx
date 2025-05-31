@@ -7,7 +7,7 @@ const tabs = ['학교에서 출발', '학교에 도착'];
 
 const CategoryTab: React.FC<Props> = ({ selectedTab, setSelectedTab }) => {
   return (
-    <div className="flex w-full justify-center border-b border-[#E0E0E0] mt-[4.25rem]">
+    <div className="flex w-full justify-center border-b-[1px] border-[#E0E0E0] mt-[4.25rem]">
       {tabs.map((tab) => (
         <div key={tab} className="relative">
           <button

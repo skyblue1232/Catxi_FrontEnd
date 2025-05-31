@@ -21,13 +21,15 @@ const HomePage = () => {
   return (
     <div className="w-full">
       <CategoryTab selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-      <LocationFilter
-        selectedTab={selectedTab}
-        selectedLocation={selectedLocations[selectedTab]}
-        onSelectLocation={handleSelectLocation}
-      />
-      <ChatCardList />
-      <FloatingButton />
+      <div className='bg-[#FAFAFA] min-h-screen'>
+        <LocationFilter
+          selectedTab={selectedTab}
+          selectedLocation={selectedLocations[selectedTab]}
+          onSelectLocation={handleSelectLocation}
+        />
+        <ChatCardList />
+        <FloatingButton />
+      </div>
     </div>
   );
 };
