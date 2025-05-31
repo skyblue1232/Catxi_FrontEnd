@@ -10,7 +10,7 @@ const FloatingButton = () => {
   
   return (
     <button
-      className="fixed bottom-[1.25rem] right-[1.688rem] bg-[#7424F5] text-white w-[3.75rem] h-[3.75rem] rounded-full shadow-lg flex items-center justify-center"
+      className="fixed bottom-[5rem] right-[1.688rem] bg-[#7424F5] text-white w-[3.75rem] h-[3.75rem] rounded-full shadow-lg flex items-center justify-center"
       onClick={handleClick}
     >
       <Float />
