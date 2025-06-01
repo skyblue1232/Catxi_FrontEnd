@@ -2,7 +2,6 @@ import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
 import { useChatSocket } from '../hooks/useChatSocket';
-import { fetchChatHistory } from '../apis/chat';
 import type { ChatMessage } from '../types/chat';
 
 const ChatLayout = () => {
@@ -10,7 +9,7 @@ const ChatLayout = () => {
   const location = useLocation();
 
   const searchParams = new URLSearchParams(location.search);
-  const userId = Number(searchParams.get('userId') || '0'); // fallback 0
+  const userId = Number(searchParams.get('userId') || '0'); 
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
