@@ -6,7 +6,6 @@ import { getChatHistory, saveChatMessage } from "../utils/chatUtils"
 import type { ChatMessage } from '../types/chat';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const subscriptionRef = useRef<webstomp.Subscription | null>(null);
 
 export function useChatSocket(
   roomId: string,
@@ -16,6 +15,7 @@ export function useChatSocket(
   onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
 ) {
   const stompClientRef = useRef<Client | null>(null);
+  const subscriptionRef = useRef<webstomp.Subscription | null>(null);
 
   const fetchHistory = async () => {
     try {
