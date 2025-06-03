@@ -48,7 +48,8 @@ export function useChatSocket(
             const msg = JSON.parse(message.body) as ChatMessage;
             if (msg.sender === userId) return; 
             onMessage(msg);
-          }
+          },
+          { Authorization: `Bearer ${jwtToken}` },
         );
       },
       (error) => {
@@ -59,21 +60,27 @@ export function useChatSocket(
     stompClientRef.current = stompClient;
   };
 
-  const sendMessage = (content: string) => {
-    const msg: ChatMessage = {
-      content,
+  const sendMessage = (message: string) => {
+    const localmsg: ChatMessage = {
+      message,
       sender: userId,
       membername,
       roomId,
       timestamp: new Date().toISOString(),
     };
 
-    saveChatMessage(roomId, msg);
-    onMessage(msg); 
+    saveChatMessage(roomId, localmsg);
+    onMessage(localmsg);
+    
+    const outgoingMsg = { // 서버로만 보내는 
+      message,
+      membername,
+      roomId,
+    }
 
     stompClientRef.current?.send(
-      `/publish/${roomId}`,
-      JSON.stringify(msg),
+      `/publish/${roomId}`,  
+      JSON.stringify(outgoingMsg),
       { Authorization: `Bearer ${jwtToken}` }
     );
   };
