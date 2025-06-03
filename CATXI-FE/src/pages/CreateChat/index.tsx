@@ -9,6 +9,7 @@ import AllSet from "./_components/AllSet";
 import { useNavigate } from "react-router-dom";
 const CreateChat = () => {
   const navigate = useNavigate();
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [answers, setAnswers] = useState<(string | null)[]>([
     null,
     null,
@@ -69,7 +70,10 @@ const CreateChat = () => {
           />
         )}
         {current == 3 && (
-          <SelectTime selectTime={(val) => setSelectPicker(val)} />
+          <SelectTime
+            selectTime={(val) => setSelectPicker(val)}
+            time={selectedTime}
+          />
         )}
         {current == 4 && !allSet && (
           <SelectMember
@@ -101,11 +105,15 @@ const CreateChat = () => {
       </div>
       {selectPicker && (
         <TimePicker
-          onCancel={() => {
-            setSelectPicker(null);
-            answers[current - 1] = "1";
-          }}
+          onCancel={() => setSelectPicker(null)}
           day={selectPicker}
+          setTime={(time: string) => {
+            setSelectedTime(time);
+            const updated = [...answers];
+            updated[2] = time;
+            setAnswers(updated);
+          }}
+          initialTime={selectedTime}
         />
       )}
     </div>

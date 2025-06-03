@@ -2,8 +2,9 @@ import clsx from "clsx";
 import { useState } from "react";
 type SelectTimeProp = {
   selectTime: (val: string | null) => void;
+  time: string | null;
 };
-const SelectTime = ({ selectTime }: SelectTimeProp) => {
+const SelectTime = ({ selectTime, time }: SelectTimeProp) => {
   const [selected, setSelected] = useState<"today" | "tomorrow">("today");
   const handleClick = (val: "today" | "tomorrow") => {
     setSelected(val);
@@ -46,10 +47,14 @@ const SelectTime = ({ selectTime }: SelectTimeProp) => {
           </button>
         </div>
         <div
-          className="w-full h-7.25 flex flex-col gap-5 px-2.5 pb-1.25 border-b-1 border-b-[#E0E0E0] text-[#9E9E9E] cursor-pointer text-xl font-medium"
+          className="w-full h-7.25 flex flex-col gap-5 px-2.5 pb-1.25 border-b-1 border-b-[#E0E0E0] cursor-pointer text-xl font-medium"
           onClick={() => selectTime(selected)}
         >
-          출발 시간 선택
+          {time ? (
+            <p className="text-[#424242]">{time}</p>
+          ) : (
+            <p className="text-[#9E9E9E]">출발 시간 선택</p>
+          )}
         </div>
       </div>
     </div>
