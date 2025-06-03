@@ -16,7 +16,7 @@ declare module 'webstomp-client' {
       errorCallback?: (error: any) => void
     ): void;
     disconnect(disconnectCallback?: () => void): void;
-    subscribe(destination: string, callback: (message: Message) => void): Subscription;
+    subscribe(destination: string, callback: (message: Message) => void, headers: { [key: string]: string } ): Subscription;
     send(destination: string, body?: string, headers?: { [key: string]: string }): void;
   }
 
