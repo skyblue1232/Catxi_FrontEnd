@@ -19,7 +19,7 @@ const AllSet = ({ value }: AllSetProps) => {
                 {title}
               </p>
               <div
-                className="w-full h-9.75 py-2.5 px-3.75 bg-[#F5F5F5] text-base font-medium text-left"
+                className="w-full h-9.75 py-2.5 px-3.75 bg-[#F5F5F5] text-base font-medium text-left flex items-center"
                 key={title}
               >
                 {value[i]}
