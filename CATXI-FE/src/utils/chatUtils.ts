@@ -28,7 +28,7 @@ export const getChatHistory = async (
     }
 
     const res = await axiosInstance.get<ChatMessage[]>(
-      `/chat/history/${roomId}`,
+      `/chat/${roomId}/message`,
       { headers }
     );
     return res.data;
