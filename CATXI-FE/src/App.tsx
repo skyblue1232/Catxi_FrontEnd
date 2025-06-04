@@ -1,29 +1,38 @@
-import './App.css'
+import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import HomeLayout from './layouts/HomeLayout';
-import HomePage from './pages/HomePage';
-import ChatPage from './pages/Chat';
-import NotFoundPage from './pages/Error';
-import ChatLayout from './layouts/ChatLayout';
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import HomeLayout from "./layouts/HomeLayout";
+import HomePage from "./pages/Home";
+import ChatPage from "./pages/Chat";
+import NotFoundPage from "./pages/error";
+import ChatLayout from "./layouts/ChatLayout";
+import { Login } from "./pages/Login";
+import SignIn from "./pages/SiginIn";
+import CreateChat from "./pages/CreateChat";
+import MyPage from "./pages/MyPage";
 
 const publicRoutes: RouteObject[] = [
   {
-    path: '/',
+    path: "/",
     element: <HomeLayout />,
-    errorElement: <NotFoundPage/>,
+    errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <HomePage /> },
       {
-        path: 'chat',
+        path: "chat/:roomId",
         element: <ChatLayout />,
         children: [
           { index: true, element: <ChatPage /> }, // /chat
           // { path: ':roomId', element: <ChatRoomPage /> } // 추후 확장 가능
         ],
       },
+      { path: "login", element: <Login /> },
+      { path: "signIn", element: <SignIn /> },
+      { path: "createChat", element: <CreateChat /> },
+      { path: "myPage", element: <MyPage /> },
     ],
   },
 ];
@@ -45,8 +54,8 @@ const App = () => {
         <RouterProvider router={router} />
       </div>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-    </QueryClientProvider>    
-  )
-}
+    </QueryClientProvider>
+  );
+};
 
 export default App;

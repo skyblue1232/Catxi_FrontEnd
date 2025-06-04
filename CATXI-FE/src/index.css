@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "./styles/fonts.css"; 
+@import "./styles/fonts.css";
 
 html {
   -webkit-tap-highlight-color: transparent;
@@ -7,7 +7,7 @@ html {
 
 body {
   background-color: #fefefe;
-  font-family: 'Pretendard', sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 #root {
@@ -15,4 +15,27 @@ body {
   max-width: 430px;
   margin-left: auto;
   margin-right: auto;
+}
+.picker-container .picker-highlight:after,
+.picker-container .picker-highlight:before {
+  background-color: transparent !important;
+}
+.picker-item.picker-item-selected {
+  color: #7424f5 !important;
+  font-size: 22px !important;
+  font-weight: 500 !important;
+}
+.picker-container .picker-highlight {
+  background-color: #f3f7ff !important;
+  z-index: 0 !important;
+}
+.picker-container .picker-column {
+  z-index: 5 !important;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;    
 }

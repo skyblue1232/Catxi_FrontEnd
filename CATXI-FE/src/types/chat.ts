@@ -1,4 +1,7 @@
 export interface ChatMessage {
-  content: string;
-  isMe: boolean;
+  message: string;
+  sender?: number;
+  timestamp?: string;
+  membername: string;
+  roomId: string;
 }
