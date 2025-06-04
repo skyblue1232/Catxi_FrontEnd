@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useOutletContext } from "react-router-dom";
 import SystemMessage from "./SystemMessage";
 import ChatMessageList from "./ChatList";
@@ -12,14 +13,14 @@ interface ChatContext {
 const ChatBoard = () => {
   const { messages, userId } = useOutletContext<ChatContext>();
 
-  console.log("userId:", userId); 
+  console.log("id:", userId); 
+
   return (
     <CommonCard className="flex flex-col h-[calc(100vh-220px)] w-full overflow-hidden">
       <SystemMessage />
       <ChatMessageList messages={messages} userId={userId} />
     </CommonCard>
   );
-
 };
 
-export default ChatBoard;
+export default memo(ChatBoard);
