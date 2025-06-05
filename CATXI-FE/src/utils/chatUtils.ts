@@ -1,7 +1,7 @@
 import type { ChatMessage } from '../types/chat';
 import axiosInstance from '../apis/axios';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
+const SERVER_URL = '';
 
 export const getChatHistory = async (
   roomId: string,

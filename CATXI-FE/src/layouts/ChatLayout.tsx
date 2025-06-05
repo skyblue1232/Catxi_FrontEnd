@@ -10,22 +10,22 @@ const ChatLayout = () => {
   const { roomId } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const userId = Number(searchParams.get('userId') || '0');
+  const memberId = Number(searchParams.get('memberId') || '0');
   const membername = (() => {
-    switch (userId) {
-      case 5:
-        return 'dj';
-      case 9:
-        return 'strings';
+    switch (memberId) {
+      case 1:
+        return '최민수';
+      case 3:
+        return '고민균';
       default:
-        return '테스트용_디폴트_JWT';
+        return '테스트용_디폴트_NAME';
     }
   })();
   const jwtToken = (() => {
-    switch (userId) {
-      case 5:
+    switch (memberId) {
+      case 1:
         return '';
-      case 9:
+      case 3:
         return '';
       default:
         return '테스트용_디폴트_JWT';
@@ -56,7 +56,7 @@ const ChatLayout = () => {
 
   const { connect, sendMessage } = useChatSocket(
     roomId!,
-    userId,
+    memberId,
     jwtToken,
     membername,
     handleMessage
@@ -74,8 +74,8 @@ const ChatLayout = () => {
   }, [roomId, connect]);
 
   const contextValue = useMemo(
-    () => ({ messages, userId }),
-    [messages, userId]
+    () => ({ messages, memberId }),
+    [messages, memberId]
   );
 
   if (!roomId) {

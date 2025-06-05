@@ -9,7 +9,7 @@ const SERVER_URL = ''; // 서버 주소 설정
 
 export function useChatSocket(
   roomId: string,
-  userId: number,
+  memberId: number,
   jwtToken: string,
   membername: string,
   onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
@@ -49,7 +49,7 @@ export function useChatSocket(
           `/topic/${roomId}`,
           (message) => {
             const msg = JSON.parse(message.body) as ChatMessage;
-            if (msg.sender === userId) return;
+            if (msg.sender === memberId) return;
             onMessage(msg);
           },
           { Authorization: `Bearer ${jwtToken}` }
@@ -61,7 +61,7 @@ export function useChatSocket(
     );
 
     stompClientRef.current = stompClient;
-  }, [fetchHistory, roomId, userId, jwtToken, onMessage]);
+  }, [fetchHistory, roomId, memberId, jwtToken, onMessage]);
 
   const disconnect = useCallback(() => {
     subscriptionRef.current?.unsubscribe();
@@ -74,7 +74,7 @@ export function useChatSocket(
     (message: string) => {
       const localmsg: ChatMessage = {
         message,
-        sender: userId,
+        sender: memberId,
         membername,
         roomId,
         timestamp: new Date().toISOString(),
@@ -95,7 +95,7 @@ export function useChatSocket(
         { Authorization: `Bearer ${jwtToken}` }
       );
     },
-    [roomId, userId, membername, jwtToken, onMessage]
+    [roomId, memberId, membername, jwtToken, onMessage]
   );
 
   useEffect(() => {
