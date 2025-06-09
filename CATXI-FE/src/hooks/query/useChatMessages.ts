@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchChatMessages } from '../../apis/chat';
-import type { GetChatMessagesResponse } from '../../types/chatHistory';
+import type { GetChatMessagesResponse } from '../../types/chatData';
 
 export const useChatMessages = (
   roomId: number,
