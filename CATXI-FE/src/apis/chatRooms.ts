@@ -1,4 +1,3 @@
-// src/apis/chatRooms.ts
 import axiosInstance from '../apis/axios';
 import type { ChatRoomResponse } from '../types/chatData';
 
@@ -15,7 +14,7 @@ export const fetchChatRooms = async ({
   sort,
   page = 0
 }: GetChatRoomsParams): Promise<ChatRoomResponse> => {
-  const response = await axiosInstance.get<ChatRoomResponse>(
+  const { data } = await axiosInstance.get<ChatRoomResponse>(
     '/chat/rooms',
     {
       params: {
@@ -26,5 +25,5 @@ export const fetchChatRooms = async ({
       }
     }
   );
-  return response.data;
+  return data;
 };

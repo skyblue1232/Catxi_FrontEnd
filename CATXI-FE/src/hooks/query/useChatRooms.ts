@@ -1,4 +1,3 @@
-// src/hooks/useChatRooms.ts
 import { useQuery } from '@tanstack/react-query';
 import { fetchChatRooms } from '../../apis/chatRooms';
 import type { ChatRoomResponse } from '../../types/chatData';

@@ -1,8 +1,8 @@
 import axiosInstance from './axios';
-import type { GetChatMessagesResponse } from '../types/chatData';
+import type { ChatMessagesResponse } from '../types/chatData';
 
-export const fetchChatMessages = async (roomId: number): Promise<GetChatMessagesResponse> => {
-  const response = await axiosInstance.get<GetChatMessagesResponse>(
+export const fetchChatMessages = async (roomId: number): Promise<ChatMessagesResponse> => {
+  const response = await axiosInstance.get<ChatMessagesResponse>(
     `/chat/${roomId}/messages`,
   );
 

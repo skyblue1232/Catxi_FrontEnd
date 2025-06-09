@@ -8,7 +8,22 @@ export const ChatRoomStatus = {
   EXPIRED: 'EXPIRED',
 } as const;
 
+export const Stations = {
+  MARIA: 'MARIA',
+  LIBRARY: 'LIBRARY',
+  DASOL: 'DASOL',
+  CONCERT_HALL: 'CONCERT_HALL',
+  PHARMACY: 'PHARMACY',
+  SOSA_ST: 'SOSA_ST',
+  BUCHEON_ST: 'BUCHEON_ST',
+  YEOKGOK_ST: 'YEOKGOK_ST',
+  GURO_ST: 'GURO_ST',
+  SINDORIM_ST: 'SINDORIM_ST'
+} as const;
+
 export type ChatRoomStatus = typeof ChatRoomStatus[keyof typeof ChatRoomStatus];
+
+export type Station = typeof Stations[keyof typeof Stations];
 
 export interface ChatMessageItem {
   messageId: number;
@@ -43,4 +58,4 @@ export interface ChatRoomList {
  
 export type ChatMessagesResponse = ApiResponse<ChatMessageItem[]>;
 
-export type ChatRoomResponse = ApiResponse<ChatRoomList[]>;
+export type ChatRoomResponse = ApiResponse<ChatRoomList>;
