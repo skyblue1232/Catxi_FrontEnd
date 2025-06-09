@@ -1,52 +1,52 @@
-import { useState } from 'react';
-import ChatCard from './ChatCard';
 import { useNavigate } from 'react-router-dom';
+import { useChatRooms } from '../../../hooks/query/useChatRooms';
+import ChatCard from './ChatCard';
+import type { ChatRoomItem } from '../../../types/chatData';
 
-interface ChatData {
-  id: number;
-  driver: string;
-  matchCount: number;
-  departure: string;
-  arrival: string;
-  departureTime: string;
-  currentPassengers: number;
-  maxPassengers: number;
+interface ChatCardListProps {
+  direction: string;
+  station: string;
+  sort: string;
+  page?: number;
 }
 
-const mockData: ChatData[] = [
-  {
-    id: 1,
-    driver: '김*준 (kdaw12)',
-    matchCount: 4,
-    departure: '역곡역',
-    arrival: '학생회관',
-    departureTime: '09:47',
-    currentPassengers: 2,
-    maxPassengers: 4,
-  },
-  {
-    id: 2,
-    driver: '이*준 (sdaw12)',
-    matchCount: 3,
-    departure: '역곡역',
-    arrival: '학생회관',
-    departureTime: '09:49',
-    currentPassengers: 2,
-    maxPassengers: 4,
-  },
-];
-
-const ChatCardList = () => {
-  const [chatData] = useState<ChatData[]>(mockData);
+const ChatCardList = ({
+  direction,
+  station,
+  sort,
+  page = 0,
+}: ChatCardListProps) => {
   const navigate = useNavigate();
+
+  const { data, isLoading, isError, error, refetch } = useChatRooms({
+    direction,
+    station,
+    sort,
+    page,
+  });
+
+  if (isLoading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <p>에러가 발생했습니다: {error.message}</p>
+        <button onClick={() => refetch()}>다시 시도하기</button>
+      </div>
+    );
+  }
+
+  const chatRooms = data?.data.content || [];
 
   return (
     <div className="mt-4 flex flex-col gap-4">
-      {chatData.map((item) => (
+      {chatRooms.map((room: ChatRoomItem) => (
         <ChatCard
-          key={item.id}
-          data={item}
-          onClick={() => navigate(`/chat/${item.id}`)}
+          key={room.roomId}
+          data={room} 
+          onClick={() => navigate(`/chat/${room.roomId}`)}
         />
       ))}
     </div>
