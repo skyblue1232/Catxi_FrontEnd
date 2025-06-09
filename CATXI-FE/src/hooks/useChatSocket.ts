@@ -2,10 +2,11 @@ import { useEffect, useRef, useCallback } from 'react';
 import SockJS from 'sockjs-client';
 import * as webstomp from 'webstomp-client';
 import type { Client } from 'webstomp-client';
-import { getChatHistory, saveChatMessage } from '../utils/chatUtils';
+import { useChatMessages } from './query/useChatMessages';
 import type { ChatMessage } from '../types/chat';
+import type { ChatMessageItem } from '../types/chatHistory';
 
-const SERVER_URL = ''; // 서버 주소 설정
+const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
 export function useChatSocket(
   roomId: string,
@@ -16,27 +17,28 @@ export function useChatSocket(
 ) {
   const stompClientRef = useRef<Client | null>(null);
   const subscriptionRef = useRef<webstomp.Subscription | null>(null);
+  const { data: chatHistory } = useChatMessages(parseInt(roomId, 7));
 
-  const fetchHistory = useCallback(async () => {
-    try {
-      const history = await getChatHistory(roomId, jwtToken);
-      if (Array.isArray(history)) {
-        history.forEach((msg) => {
-          onMessage(msg, { isHistory: true });
-        });
-      }
-    } catch (error) {
-      console.error('이전 메시지 불러오기 실패:', error);
+  useEffect(() => {
+    if (chatHistory?.data) {
+      chatHistory.data.forEach((msg: ChatMessageItem) => {
+        const convertedMsg: ChatMessage = {
+          message: msg.content,
+          sender: msg.senderId,
+          membername: msg.senderName,
+          roomId: String(msg.roomId),
+          timestamp: msg.sentAt,
+        };
+        onMessage(convertedMsg, { isHistory: true });
+      });
     }
-  }, [roomId, jwtToken, onMessage]);
+  }, [chatHistory, onMessage]);
 
   const connect = useCallback(() => {
     if (stompClientRef.current) {
       console.log('이미 연결됨');
       return;
     }
-
-    fetchHistory();
 
     const socket = new SockJS(`${SERVER_URL}/connect`);
     const stompClient = webstomp.over(socket);
@@ -61,7 +63,7 @@ export function useChatSocket(
     );
 
     stompClientRef.current = stompClient;
-  }, [fetchHistory, roomId, memberId, jwtToken, onMessage]);
+  }, [roomId, memberId, jwtToken, onMessage]);
 
   const disconnect = useCallback(() => {
     subscriptionRef.current?.unsubscribe();
@@ -80,7 +82,6 @@ export function useChatSocket(
         timestamp: new Date().toISOString(),
       };
 
-      saveChatMessage(roomId, localmsg);
       onMessage(localmsg);
 
       const outgoingMsg = {
