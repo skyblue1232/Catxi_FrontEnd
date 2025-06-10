@@ -3,7 +3,7 @@ interface Props {
   onClick?: () => void;
 }
 
-const ChatJoinButton: React.FC<Props> = ({ isDisabled, onClick }) => {
+const ChatJoinButton = ({ isDisabled, onClick }: Props) => {
   return (
     <button
       disabled={isDisabled}

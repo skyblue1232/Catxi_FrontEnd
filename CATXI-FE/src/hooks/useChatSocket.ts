@@ -4,7 +4,7 @@ import * as webstomp from 'webstomp-client';
 import type { Client } from 'webstomp-client';
 import { useChatMessages } from './query/useChatMessages';
 import type { ChatMessage } from '../types/chat';
-import type { ChatMessageItem } from '../types/chatHistory';
+import type { ChatMessageItem } from '../types/chatData';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
