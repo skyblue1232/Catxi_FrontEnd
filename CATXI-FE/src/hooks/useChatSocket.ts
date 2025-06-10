@@ -12,7 +12,7 @@ export function useChatSocket(
   roomId: string,
   memberId: number,
   jwtToken: string,
-  membername: string,
+  email: string,
   onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
 ) {
   const stompClientRef = useRef<Client | null>(null);
@@ -25,7 +25,7 @@ export function useChatSocket(
         const convertedMsg: ChatMessage = {
           message: msg.content,
           sender: msg.senderId,
-          membername: msg.senderName,
+          email: msg.senderName,
           roomId: String(msg.roomId),
           timestamp: msg.sentAt,
         };
@@ -77,7 +77,7 @@ export function useChatSocket(
       const localmsg: ChatMessage = {
         message,
         sender: memberId,
-        membername,
+        email,
         roomId,
         timestamp: new Date().toISOString(),
       };
@@ -86,7 +86,7 @@ export function useChatSocket(
 
       const outgoingMsg = {
         message,
-        membername,
+        email,
         roomId,
       };
 
@@ -96,7 +96,7 @@ export function useChatSocket(
         { Authorization: `Bearer ${jwtToken}` }
       );
     },
-    [roomId, memberId, membername, jwtToken, onMessage]
+    [roomId, memberId, email, jwtToken, onMessage]
   );
 
   useEffect(() => {
