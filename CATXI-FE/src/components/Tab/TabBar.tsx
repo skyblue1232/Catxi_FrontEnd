@@ -26,6 +26,7 @@ const TabBar = () => {
     <nav
       className="
         fixed
+        max-w-107.5
         bottom-0
         h-[3.75rem]
         px-[3.906rem]
@@ -37,7 +38,9 @@ const TabBar = () => {
         shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)]
       "
     >
-      <Link to="/">{isCurrent("/") ? <HomeButton /> : <HomeIcon />}</Link>
+      <Link to="/home">
+        {isCurrent("/home") ? <HomeButton /> : <HomeIcon />}
+      </Link>
 
       <div className="mx-[5rem]">
         {isCurrent("/chat") ? <ChatButton /> : <ChatIcon />}
