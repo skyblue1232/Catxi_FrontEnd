@@ -10,21 +10,15 @@ const TabBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const showTabRoutes = ["/", "/chat", "/myPage"];
+  const showTabRoutes = ["/home", "/chat", "/myPage"];
 
   const isTabVisible = showTabRoutes.some((path) => {
-    if (path === "/") {
-      return currentPath === "/";
-    }
     return currentPath === path || currentPath.startsWith(path + "/");
   });
 
   if (!isTabVisible) return null;
 
   const isCurrent = (path: string) => {
-    if (path === "/") {
-      return currentPath === "/";
-    }
     return currentPath === path || currentPath.startsWith(path + "/");
   };
 
@@ -43,24 +37,14 @@ const TabBar = () => {
         shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)]
       "
     >
-      <Link to="/">
-        {isCurrent("/") ? (
-          <HomeButton />
-        ) : (
-          <HomeIcon />
-        )}
-      </Link>
+      <Link to="/">{isCurrent("/") ? <HomeButton /> : <HomeIcon />}</Link>
 
       <div className="mx-[5rem]">
         {isCurrent("/chat") ? <ChatButton /> : <ChatIcon />}
       </div>
 
       <Link to="/myPage">
-        {isCurrent("/myPage") ? (
-          <MyButton />
-        ) : (
-          <MyIcon />
-        )}
+        {isCurrent("/myPage") ? <MyButton /> : <MyIcon />}
       </Link>
     </nav>
   );

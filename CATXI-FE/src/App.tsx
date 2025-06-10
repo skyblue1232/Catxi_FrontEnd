@@ -1,43 +1,57 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import type { RouteObject } from "react-router-dom";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import HomeLayout from "./layouts/HomeLayout";
-import HomePage from "./pages/Home";
 import ChatPage from "./pages/Chat";
-import NotFoundPage from "./pages/error";
+import NotFoundPage from "./pages/Error";
 import ChatLayout from "./layouts/ChatLayout";
 import { Login } from "./pages/Login";
 import SignIn from "./pages/SiginIn";
 import CreateChat from "./pages/CreateChat";
 import MyPage from "./pages/MyPage";
+import Redirection from "./pages/Redirect";
+import HomePage from "./pages/Home";
+import { AuthCheck } from "./utils/authCheck";
 
-const publicRoutes: RouteObject[] = [
+const publicRoutes = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
     errorElement: <NotFoundPage />,
     children: [
-      { index: true, element: <HomePage /> },
+      { index: true, element: <Login />, handle: { isPublic: true } },
       {
         path: "chat/:roomId",
+        loader: AuthCheck.authPageCheck,
         element: <ChatLayout />,
         children: [
           { index: true, element: <ChatPage /> }, // /chat
           // { path: ':roomId', element: <ChatRoomPage /> } // 추후 확장 가능
         ],
       },
-      { path: "login", element: <Login /> },
-      { path: "signIn", element: <SignIn /> },
-      { path: "createChat", element: <CreateChat /> },
-      { path: "myPage", element: <MyPage /> },
+      { path: "home", element: <HomePage />, loader: AuthCheck.authPageCheck },
+      {
+        path: "signIn",
+        element: <SignIn />,
+        handle: { isPublic: true },
+        loader: AuthCheck.authPageCheck,
+      },
+      {
+        path: "createChat",
+        element: <CreateChat />,
+        loader: AuthCheck.authPageCheck,
+      },
+      { path: "myPage", element: <MyPage />, loader: AuthCheck.authPageCheck },
+      {
+        path: "callback/kakao",
+        element: <Redirection />,
+        handle: { isPublic: true },
+      },
     ],
   },
-];
-
-const router = createBrowserRouter([...publicRoutes]);
+]);
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,7 +65,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="w-full bg-background min-h-screen font-pretendard">
-        <RouterProvider router={router} />
+        <RouterProvider router={publicRoutes} />
       </div>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
