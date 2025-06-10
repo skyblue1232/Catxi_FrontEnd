@@ -6,14 +6,15 @@ import { ModalProvider } from "../contexts/ModalContext";
 const HomeLayout = () => {
   return (
     <ModalProvider>
-      <div 
+      <div
         className="
-          w-full 
+          w-full
           h-screen 
           relative 
           flex 
           flex-col 
-          ">
+          "
+      >
         <Outlet />
         <TabBar />
         <CommonModal />
