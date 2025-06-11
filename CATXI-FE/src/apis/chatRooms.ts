@@ -1,5 +1,5 @@
-import axiosInstance from '../apis/axios';
 import type { ChatRoomResponse } from '../types/chatData';
+import axiosInstance from "./axios";
 
 interface GetChatRoomsParams {
   direction: string;

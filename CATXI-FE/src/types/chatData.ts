@@ -3,7 +3,6 @@ import type { ApiResponse } from './apiResponse';
 export const ChatRoomStatus = {
   WAITING: 'WAITING',
   READY_CHECK: 'READY_CHECK',
-  READY_LOCKED: 'READY_LOCKED',
   MATCHED: 'MATCHED',
   EXPIRED: 'EXPIRED',
 } as const;
@@ -38,6 +37,7 @@ export interface ChatRoomItem {
     roomId: number;
     hostId: number;
     hostName: string;
+    matchCount: number,
     startPoint: string;
     endPoint: string;
     recruitSize: number;
