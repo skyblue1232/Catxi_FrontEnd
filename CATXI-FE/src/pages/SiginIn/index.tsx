@@ -1,18 +1,13 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import LoginCheck from "../../assets/icons/loginCheck.svg?react";
 import clsx from "clsx";
+import { useSignin } from "../../hooks/useSignIn";
 const SignIn = () => {
+  const { signIn } = useSignin();
   const [nickName, setNickName] = useState("");
   const [studentId, setStudentId] = useState("");
-  const [nameChecked, setNameChecked] = useState(false);
-  const [nameError, setNameError] = useState(false);
-  const navigate = useNavigate();
-  const isValid = nickName && nameChecked && studentId && !nameError;
-  const hanleCheckName = () => {
-    setNameChecked(true);
-    setNameError(nickName !== "채현");
-  };
+  // const [nameChecked, setNameChecked] = useState(false);
+  const isValid = nickName && studentId;
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] justify-between pt-15.25 px-7.5 relative bg-[#FAFAFA]">
       <div className="flex flex-col gap-10">
@@ -37,7 +32,6 @@ const SignIn = () => {
                   className="bg-[#F5F5F5] h-9 px-3.75 py-2.5 placeholder:text-[#9E9E9E] rounded-md focus:outline-none w-full"
                   onChange={(e) => {
                     setNickName(e.target.value);
-                    setNameChecked(false);
                   }}
                 />
                 <button
@@ -48,12 +42,11 @@ const SignIn = () => {
                       ? "text-[#9E9E9E] bg-[#E0E0E0]"
                       : "bg-[#7424F5] text-[#FAFAFA] cursor-pointer"
                   )}
-                  onClick={hanleCheckName}
                 >
                   중복확인
                 </button>
               </div>
-              {nameChecked &&
+              {/* {nameChecked &&
                 (nameError ? (
                   <p className="text-xs text-[#FF5252]">
                     이미 사용 중인 닉네임입니다.
@@ -62,7 +55,7 @@ const SignIn = () => {
                   <p className="text-xs text-[#3574FF]">
                     사용 가능한 닉네임입니다.
                   </p>
-                ))}
+                ))} */}
             </div>
           </div>
           <div className="flex flex-col gap-2.5">
@@ -85,8 +78,7 @@ const SignIn = () => {
             : "bg-[#7424F5] text-[#FAFAFA] cursor-pointer"
         )}
         onClick={() => {
-          alert("성공");
-          navigate("/");
+          signIn({ nickname: nickName, StudentNo: Number(studentId) });
         }}
       >
         시작하기
