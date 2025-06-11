@@ -2,35 +2,17 @@ import { Outlet, useParams, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
 import { useChatSocket } from '../hooks/useChatSocket';
+import { useSseSubscribe } from '../hooks/useSseSubscribe';
 import type { ChatMessage } from '../types/chat';
-
-// 서버 테스트용.
+import { getJwtToken, getMemberName } from '../utils/test/getMemberInfo';
 
 const ChatLayout = () => {
   const { roomId } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const memberId = Number(searchParams.get('memberId') || '0');
-  const membername = (() => {
-    switch (memberId) {
-      case 1:
-        return '최민수';
-      case 3:
-        return '고민균';
-      default:
-        return '테스트용_디폴트_NAME';
-    }
-  })();
-  const jwtToken = (() => {
-    switch (memberId) {
-      case 1:
-        return '';
-      case 3:
-        return '';
-      default:
-        return '테스트용_디폴트_JWT';
-    }
-  })();
+  const membername = getMemberName(memberId);        // 변경
+  const jwtToken = getJwtToken(memberId);  
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -39,22 +21,21 @@ const ChatLayout = () => {
     (msg: ChatMessage, options?: { isHistory?: boolean }) => {
       setMessages((prev) => {
         if (options?.isHistory) {
-          const alreadyExists = prev.find(
+          const alreadyExists = prev.some(
             (m) =>
               m.timestamp === msg.timestamp &&
               m.message === msg.message &&
               m.sender === msg.sender
           );
           return alreadyExists ? prev : [...prev, msg];
-        } else {
-          return [...prev, msg];
         }
+        return [...prev, msg];
       });
     },
     []
   );
 
-  const { connect, sendMessage } = useChatSocket(
+  const { connect, disconnect: disconnectWs, sendMessage } = useChatSocket(
     roomId!,
     memberId,
     jwtToken,
@@ -62,16 +43,22 @@ const ChatLayout = () => {
     handleMessage
   );
 
+  const { connect: connectSse, disconnect: disconnect } = useSseSubscribe(roomId!, jwtToken);
+
   useEffect(() => {
     if (!roomId) return;
 
     connect();
+    connectSse();
+    
     console.log("WebSocket 연결 시도:", roomId);
 
     return () => {
-      console.log("WebSocket 연결 해제:", roomId);
+      disconnect(); // sse 연결 해제
+      disconnectWs(); // websocket 연결 해제
+      console.log("SSE, Websocket 연결 해제:", roomId);
     };
-  }, [roomId, connect]);
+  }, [roomId, connect, connectSse, disconnect, disconnectWs]);
 
   const contextValue = useMemo(
     () => ({ messages, memberId }),
