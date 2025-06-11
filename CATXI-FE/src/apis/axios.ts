@@ -1,7 +1,7 @@
 import axios from "axios";
 import Storage from "../utils/storage";
 
-const token = Storage.getAccessToken(); 
+const token = Storage.getAccessToken();
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_API_URL,
