@@ -16,9 +16,14 @@ const Redirection = () => {
           `/auth/login/kakao?code=${code}`
         );
         const accessToken = headers["access"];
+        const isNewUser = headers["isNewUser"];
         if (data.success && accessToken) {
           Storage.setAccessToken(accessToken);
-          navigate("/home");
+          if (isNewUser) {
+            navigate("/signIn");
+          } else {
+            navigate("/home");
+          }
         }
       } catch {
         window.alert("소셜 로그인에 실패하였습니다.");
