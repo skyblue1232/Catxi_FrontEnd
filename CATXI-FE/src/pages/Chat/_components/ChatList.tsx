@@ -4,10 +4,10 @@ import type { ChatMessage } from "../../../types/chat";
 
 interface Props {
   messages: ChatMessage[];
-  userId: number;
+  memberId: number;
 }
 
-const ChatList = ({ messages, userId }: Props) => {
+const ChatList = ({ messages, memberId }: Props) => {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,9 +28,8 @@ const ChatList = ({ messages, userId }: Props) => {
         <ChatItem
           key={idx}
           message={msg.message}
-          isMe={msg.sender === userId}
-          membername={'고구마'}
-          // membername={msg.membername}
+          isMe={String(msg.sender) === String(memberId)}
+          email={msg.email}
         />
       ))}
     </div>

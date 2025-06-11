@@ -1,9 +1,9 @@
 export const getMemberName = (memberId: number): string => {
   switch (memberId) {
     case 1:
-      return '최민수';
-    case 3:
-      return '고민균';
+      return '';
+    case 2:
+      return 'skybluekmg@gmail.com';
     default:
       return '테스트용_디폴트_NAME';
   }
