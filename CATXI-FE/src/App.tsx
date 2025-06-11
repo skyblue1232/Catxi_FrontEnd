@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import HomeLayout from "./layouts/HomeLayout";
 import ChatPage from "./pages/Chat";
-import NotFoundPage from "./pages/error";
+// import NotFoundPage from "./pages/error";
 import ChatLayout from "./layouts/ChatLayout";
 import { Login } from "./pages/Login";
 import SignIn from "./pages/SiginIn";
@@ -19,7 +19,6 @@ const publicRoutes = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
-    errorElement: <NotFoundPage />,
     children: [
       { index: true, element: <Login />, handle: { isPublic: true } },
       {
