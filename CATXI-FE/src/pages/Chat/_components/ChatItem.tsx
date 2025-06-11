@@ -3,10 +3,11 @@ import { useModal } from "../../../contexts/ModalContext";
 interface Props {
   message: string;
   isMe: boolean;
-  membername: string;
+  email: string;
 }
 
-const maskName = (name: string) => {
+const maskName = (name: string | null | undefined) => {
+  if (!name) return "";
   if (name.length <= 1) return name;
   const middle = "*".repeat(name.length - 2);
   return `${name[0]}${middle}${name[name.length - 1]}`;
@@ -23,13 +24,13 @@ const getCurrentTime = () => {
   return now.toLocaleTimeString('ko-KR', options);
 };
 
-const ChatItem = ({ message, isMe, membername }: Props) => {
+const ChatItem = ({ message, isMe, email }: Props) => {
   const { openModal, closeModal } = useModal(); 
 
   const handleNameClick = () => {
     if (!isMe) {
       openModal({
-        title: `${maskName(membername)}`,
+        title: `${maskName(email)}`,
         buttons: [
           {
             label: "신고하기",
@@ -47,7 +48,7 @@ const ChatItem = ({ message, isMe, membername }: Props) => {
         className={`text-xs text-gray-600 mb-1 ${!isMe ? 'cursor-pointer hover:underline' : ''}`}
         onClick={handleNameClick}
       >
-        {isMe ? "나" : maskName(membername)}
+        {isMe ? "나" : maskName(email)}
       </p>
       <div
         className={[

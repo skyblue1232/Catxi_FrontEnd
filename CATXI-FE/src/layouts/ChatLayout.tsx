@@ -4,15 +4,27 @@ import ChatInput from '../pages/Chat/_components/ChatInput';
 import { useChatSocket } from '../hooks/useChatSocket';
 import { useSseSubscribe } from '../hooks/useSseSubscribe';
 import type { ChatMessage } from '../types/chat';
-import { getJwtToken, getMemberName } from '../utils/test/getMemberInfo';
+import { jwtDecode } from 'jwt-decode';
+import Storage from '../utils/storage';
+
+interface JwtPayload {
+  email: string;
+  [key: string]: any;
+}
 
 const ChatLayout = () => {
   const { roomId } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const memberId = Number(searchParams.get('memberId') || '0');
-  const membername = getMemberName(memberId);        // 변경
-  const jwtToken = getJwtToken(memberId);  
+
+  const jwtToken = Storage.getAccessToken(); 
+
+  let email = '';
+  if (jwtToken) {
+    const decoded = jwtDecode<JwtPayload>(jwtToken);
+    email = decoded.email;
+  }
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -38,24 +50,23 @@ const ChatLayout = () => {
   const { connect, disconnect: disconnectWs, sendMessage } = useChatSocket(
     roomId!,
     memberId,
-    jwtToken,
-    membername,
+    jwtToken!,
+    email,
     handleMessage
   );
 
-  const { connect: connectSse, disconnect: disconnect } = useSseSubscribe(roomId!, jwtToken);
+  const { connect: connectSse, disconnect } = useSseSubscribe(roomId!, jwtToken!);
 
   useEffect(() => {
     if (!roomId) return;
 
     connect();
     connectSse();
-    
     console.log("WebSocket 연결 시도:", roomId);
 
     return () => {
-      disconnect(); // sse 연결 해제
-      disconnectWs(); // websocket 연결 해제
+      disconnect();
+      disconnectWs();
       console.log("SSE, Websocket 연결 해제:", roomId);
     };
   }, [roomId, connect, connectSse, disconnect, disconnectWs]);

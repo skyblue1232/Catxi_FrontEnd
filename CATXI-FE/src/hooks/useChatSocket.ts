@@ -42,16 +42,26 @@ export function useChatSocket(
 
     const socket = new SockJS(`${SERVER_URL}/connect`);
     const stompClient = webstomp.over(socket);
+    stompClient.debug = () => {};
 
     stompClient.connect(
       { Authorization: `Bearer ${jwtToken}` },
       () => {
         console.log('STOMP 연결 성공');
+
         subscriptionRef.current = stompClient.subscribe(
           `/topic/${roomId}`,
           (message) => {
-            const msg = JSON.parse(message.body) as ChatMessage;
-            if (msg.sender === memberId) return;
+            const parsed = JSON.parse(message.body) as Partial<ChatMessage>;
+
+            const msg: ChatMessage = {
+              message: parsed.message!,
+              email: parsed.email!,
+              roomId: parsed.roomId!,
+              timestamp: parsed.timestamp!,
+              sender: parsed.email === email ? memberId : -1, 
+            };
+
             onMessage(msg);
           },
           { Authorization: `Bearer ${jwtToken}` }
@@ -74,27 +84,21 @@ export function useChatSocket(
 
   const sendMessage = useCallback(
     (message: string) => {
-      const localmsg: ChatMessage = {
-        message,
-        sender: memberId,
-        email,
-        roomId,
-        timestamp: new Date().toISOString(),
-      };
-
-      onMessage(localmsg);
-
       const outgoingMsg = {
         message,
         email,
         roomId,
       };
 
-      stompClientRef.current?.send(
-        `/publish/${roomId}`,
-        JSON.stringify(outgoingMsg),
-        { Authorization: `Bearer ${jwtToken}` }
-      );
+      if (stompClientRef.current?.connect) {
+        stompClientRef.current.send(
+          `/publish/${roomId}`,
+          JSON.stringify(outgoingMsg),
+          { Authorization: `Bearer ${jwtToken}` }
+        );
+      } else {
+        console.warn("WebSocket 연결이 진행 중");
+      }
     },
     [roomId, memberId, email, jwtToken, onMessage]
   );
