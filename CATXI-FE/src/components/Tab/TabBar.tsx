@@ -10,21 +10,15 @@ const TabBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const showTabRoutes = ["/", "/chat", "/myPage"];
+  const showTabRoutes = ["/home", "/chat", "/myPage"];
 
   const isTabVisible = showTabRoutes.some((path) => {
-    if (path === "/") {
-      return currentPath === "/";
-    }
     return currentPath === path || currentPath.startsWith(path + "/");
   });
 
   if (!isTabVisible) return null;
 
   const isCurrent = (path: string) => {
-    if (path === "/") {
-      return currentPath === "/";
-    }
     return currentPath === path || currentPath.startsWith(path + "/");
   };
 
@@ -32,6 +26,7 @@ const TabBar = () => {
     <nav
       className="
         fixed
+        max-w-107.5
         bottom-0
         h-[3.75rem]
         px-[3.906rem]
@@ -43,12 +38,8 @@ const TabBar = () => {
         shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)]
       "
     >
-      <Link to="/">
-        {isCurrent("/") ? (
-          <HomeButton />
-        ) : (
-          <HomeIcon />
-        )}
+      <Link to="/home">
+        {isCurrent("/home") ? <HomeButton /> : <HomeIcon />}
       </Link>
 
       <div className="mx-[5rem]">
@@ -56,11 +47,7 @@ const TabBar = () => {
       </div>
 
       <Link to="/myPage">
-        {isCurrent("/myPage") ? (
-          <MyButton />
-        ) : (
-          <MyIcon />
-        )}
+        {isCurrent("/myPage") ? <MyButton /> : <MyIcon />}
       </Link>
     </nav>
   );

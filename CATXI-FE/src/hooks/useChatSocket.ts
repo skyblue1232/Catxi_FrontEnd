@@ -2,33 +2,37 @@ import { useEffect, useRef, useCallback } from 'react';
 import SockJS from 'sockjs-client';
 import * as webstomp from 'webstomp-client';
 import type { Client } from 'webstomp-client';
-import { getChatHistory, saveChatMessage } from '../utils/chatUtils';
+import { useChatMessages } from './query/useChatMessages';
 import type { ChatMessage } from '../types/chat';
+import type { ChatMessageItem } from '../types/chatData';
 
-const SERVER_URL = ''; // 서버 주소 설정
+const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
 export function useChatSocket(
   roomId: string,
-  userId: number,
+  memberId: number,
   jwtToken: string,
-  membername: string,
+  email: string,
   onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
 ) {
   const stompClientRef = useRef<Client | null>(null);
   const subscriptionRef = useRef<webstomp.Subscription | null>(null);
+  const { data: chatHistory } = useChatMessages(parseInt(roomId, 7));
 
-  const fetchHistory = useCallback(async () => {
-    try {
-      const history = await getChatHistory(roomId, jwtToken);
-      if (Array.isArray(history)) {
-        history.forEach((msg) => {
-          onMessage(msg, { isHistory: true });
-        });
-      }
-    } catch (error) {
-      console.error('이전 메시지 불러오기 실패:', error);
+  useEffect(() => {
+    if (chatHistory?.data) {
+      chatHistory.data.forEach((msg: ChatMessageItem) => {
+        const convertedMsg: ChatMessage = {
+          message: msg.content,
+          sender: msg.senderId,
+          email: msg.senderName,
+          roomId: String(msg.roomId),
+          timestamp: msg.sentAt,
+        };
+        onMessage(convertedMsg, { isHistory: true });
+      });
     }
-  }, [roomId, jwtToken, onMessage]);
+  }, [chatHistory, onMessage]);
 
   const connect = useCallback(() => {
     if (stompClientRef.current) {
@@ -36,20 +40,28 @@ export function useChatSocket(
       return;
     }
 
-    fetchHistory();
-
     const socket = new SockJS(`${SERVER_URL}/connect`);
     const stompClient = webstomp.over(socket);
+    stompClient.debug = () => {};
 
     stompClient.connect(
       { Authorization: `Bearer ${jwtToken}` },
       () => {
         console.log('STOMP 연결 성공');
+
         subscriptionRef.current = stompClient.subscribe(
           `/topic/${roomId}`,
           (message) => {
-            const msg = JSON.parse(message.body) as ChatMessage;
-            if (msg.sender === userId) return;
+            const parsed = JSON.parse(message.body) as Partial<ChatMessage>;
+
+            const msg: ChatMessage = {
+              message: parsed.message!,
+              email: parsed.email!,
+              roomId: parsed.roomId!,
+              timestamp: parsed.timestamp!,
+              sender: parsed.email === email ? memberId : -1, 
+            };
+
             onMessage(msg);
           },
           { Authorization: `Bearer ${jwtToken}` }
@@ -61,7 +73,7 @@ export function useChatSocket(
     );
 
     stompClientRef.current = stompClient;
-  }, [fetchHistory, roomId, userId, jwtToken, onMessage]);
+  }, [roomId, memberId, jwtToken, onMessage]);
 
   const disconnect = useCallback(() => {
     subscriptionRef.current?.unsubscribe();
@@ -72,30 +84,23 @@ export function useChatSocket(
 
   const sendMessage = useCallback(
     (message: string) => {
-      const localmsg: ChatMessage = {
-        message,
-        sender: userId,
-        membername,
-        roomId,
-        timestamp: new Date().toISOString(),
-      };
-
-      saveChatMessage(roomId, localmsg);
-      onMessage(localmsg);
-
       const outgoingMsg = {
         message,
-        membername,
+        email,
         roomId,
       };
 
-      stompClientRef.current?.send(
-        `/publish/${roomId}`,
-        JSON.stringify(outgoingMsg),
-        { Authorization: `Bearer ${jwtToken}` }
-      );
+      if (stompClientRef.current?.connect) {
+        stompClientRef.current.send(
+          `/publish/${roomId}`,
+          JSON.stringify(outgoingMsg),
+          { Authorization: `Bearer ${jwtToken}` }
+        );
+      } else {
+        console.warn("WebSocket 연결이 진행 중");
+      }
     },
-    [roomId, userId, membername, jwtToken, onMessage]
+    [roomId, memberId, email, jwtToken, onMessage]
   );
 
   useEffect(() => {

@@ -5,29 +5,40 @@ import FloatingButton from './_components/FloatingButton';
 import { useState } from 'react';
 
 const HomePage = () => {
-  const [selectedTab, setSelectedTab] = useState('학교에서 출발');
-  const [selectedLocations, setSelectedLocations] = useState<Record<string, string | null>>({
-    '학교에서 출발': null,
-    '학교에 도착': null,
+  const [direction, setDirection] = useState<'FROM_SCHOOL' | 'TO_SCHOOL'>('FROM_SCHOOL');
+  const [selectedLocations, setSelectedLocations] = useState<Record<'FROM_SCHOOL' | 'TO_SCHOOL', string | null>>({
+    FROM_SCHOOL: null,
+    TO_SCHOOL: null,
   });
+  const [sort, setSort] = useState<'departAt' | 'createdTime'>('departAt');
+  const page = 0;
 
   const handleSelectLocation = (location: string) => {
     setSelectedLocations((prev) => ({
       ...prev,
-      [selectedTab]: location,
+      [direction]: location,
     }));
   };
 
   return (
     <div className="w-full">
-      <CategoryTab selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-      <div className='bg-[#FAFAFA] min-h-screen'>
+      <CategoryTab direction={direction} setDirection={setDirection} />
+
+      <div className="bg-[#FAFAFA] min-h-screen">
         <LocationFilter
-          selectedTab={selectedTab}
-          selectedLocation={selectedLocations[selectedTab]}
+          station={selectedLocations[direction]}
+          sort={sort}
           onSelectLocation={handleSelectLocation}
+          onSelectSort={setSort}
         />
-        <ChatCardList />
+
+        <ChatCardList
+          direction={direction}
+          station={selectedLocations[direction] || ''}
+          sort={sort}
+          page={page}
+        />
+
         <FloatingButton />
       </div>
     </div>

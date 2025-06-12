@@ -16,6 +16,9 @@
     "@tanstack/react-query-devtools": "^5.76.1",
     "axios": "^1.9.0",
     "clsx": "^2.1.1",
+    "crypto-js": "^4.2.0",
+    "event-source-polyfill": "^1.0.31",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -26,10 +29,12 @@
     "sockjs-client": "^1.6.1",
     "tailwindcss": "^4.1.7",
     "webstomp-client": "^1.2.6",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/crypto-js": "^4.2.2",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/sockjs-client": "^1.5.4",

@@ -10,6 +10,7 @@ declare module 'webstomp-client' {
   }
 
   export interface Client {
+    [x: string]: () => void;
     connect(
       headers: { [key: string]: string },
       connectCallback: () => void,
