@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useChatRooms } from '../../../hooks/query/useChatRooms';
+import { useJoinChatRoom } from '../../../hooks/mutation/chat/useJoinChatRoom';
 import ChatCard from './ChatCard';
 import type { ChatRoomItem } from '../../../types/chatData';
 
@@ -17,7 +18,6 @@ const ChatCardList = ({
   page = 0,
 }: ChatCardListProps) => {
   const navigate = useNavigate();
-
   const { data, isLoading, isError, error, refetch } = useChatRooms({
     direction,
     station,
@@ -25,14 +25,26 @@ const ChatCardList = ({
     page,
   });
 
-  if (isLoading) {
-    return <div>로딩 중...</div>;
-  }
+  const { mutate: joinRoom } = useJoinChatRoom();
+
+  const handleClick = (roomId: number) => {
+    joinRoom(String(roomId), {
+      onSuccess: () => {
+        navigate(`/chat/${roomId}`);
+      },
+      onError: (err) => {
+        console.error('입장 실패', err);
+        alert('입장에 실패했습니다.');
+      },
+    });
+  };
+
+  if (isLoading) return <div>로딩 중...</div>;
 
   if (isError) {
     return (
       <div>
-        <p>에러가 발생했습니다: {error.message}</p>
+        <p>에러: {error.message}</p>
         <button onClick={() => refetch()}>다시 시도하기</button>
       </div>
     );
@@ -45,8 +57,8 @@ const ChatCardList = ({
       {chatRooms.map((room: ChatRoomItem) => (
         <ChatCard
           key={room.roomId}
-          data={room} 
-          onClick={() => navigate(`/chat/${room.roomId}`)}
+          data={room}
+          onClick={() => handleClick(room.roomId)}
         />
       ))}
     </div>

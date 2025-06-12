@@ -1,15 +1,15 @@
 import CommonCard from "../../../components/Common/CommonCard";
 import ChatJoinButton from "./ChatJoinButton";
 import type { ChatRoomItem } from "../../../types/chatData";
+import { stationDisplayMap } from "../../../constants/stationMap";
+import { getDepartText } from "../../../utils/date";
 
-interface Props {
+interface Props { 
   data: ChatRoomItem;
   onClick: () => void;
 }
 
 const ChatCard = ({ data, onClick }: Props) => {
-  const isDisabled = data.status !== 'WAITING';
-  
   return (
     <CommonCard size="default">
       <div
@@ -19,9 +19,9 @@ const ChatCard = ({ data, onClick }: Props) => {
         <div className="flex justify-between items-center">
           <div className="flex flex-col p-2">
             <span className="font-medium text-[14px]">{data.hostName}</span>
-            <span className="font-regular text-[12px]">매칭 성공 0회</span>
+            <span className="font-regular text-[12px]">매칭 성공 {data.matchCount}회</span>
           </div>
-          <span className="text-xs text-[#8C46F6] font-medium">오늘 출발</span>
+          <span className="text-xs text-[#8C46F6] font-medium">{getDepartText(data.departAt)}</span>
         </div>
 
         <div className="w-full bg-[#E0E0E0] h-[1px] my-[0.938rem]"></div>
@@ -29,14 +29,18 @@ const ChatCard = ({ data, onClick }: Props) => {
         <div className="flex justify-between items-center ml-[2.406rem]">
           <div className="flex flex-col gap-[0.5rem]">
             <span className="flex justify-center">출발지</span>
-            <span className="text-[18px] font-medium">{data.startPoint}</span>
+            <span className="text-[18px] font-medium">
+              {stationDisplayMap[data.startPoint] || data.startPoint}
+            </span>
           </div>
 
           <span className="text-[#8C46F6] w-[1rem] h-[1rem]">→</span>
 
           <div className="flex flex-col gap-[0.5rem] mr-[2.406rem]">
             <span className="flex justify-center">도착지</span>
-            <span className="text-[18px] font-medium">{data.endPoint}</span>
+            <span className="text-[18px] font-medium">
+              {stationDisplayMap[data.endPoint] || data.endPoint}
+            </span>
           </div>
         </div>
 
@@ -59,7 +63,7 @@ const ChatCard = ({ data, onClick }: Props) => {
           </div>
 
           <div>
-            <ChatJoinButton isDisabled={isDisabled} onClick={onClick}/>
+            <ChatJoinButton status={data.status} onClick={onClick} />
           </div>
         </div>
       </div>
