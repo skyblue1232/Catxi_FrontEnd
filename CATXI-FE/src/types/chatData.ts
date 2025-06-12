@@ -2,7 +2,7 @@ import type { ApiResponse } from './apiResponse';
 
 export const ChatRoomStatus = {
   WAITING: 'WAITING',
-  READY_CHECK: 'READY_CHECK',
+  READY_LOCKED: 'READY_LOCKED',
   MATCHED: 'MATCHED',
   EXPIRED: 'EXPIRED',
 } as const;
