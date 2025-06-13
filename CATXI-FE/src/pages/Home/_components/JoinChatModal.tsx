@@ -27,10 +27,10 @@ const JoinChatModalContent = ({ roomId }: Props) => {
   return (
     <div className="z-500">
       <h2 className="text-lg font-bold">채팅방 참여</h2>
-      <p className="text-sm mt-2">이 채팅방에 참여하시겠습니까?</p>
+      <p className="text-md mt-2">이 채팅방에 참여하시겠습니까?</p>
       <div className="flex justify-end gap-2 mt-4">
-        <button onClick={closeModal} className="px-4 py-2">아니오</button>
-        <button onClick={handleJoin} className="bg-[#8C46F6] text-white px-4 py-2 rounded">예</button>
+        <button onClick={closeModal} className="px-10 py-2 text-[#424242] bg-[#F5F5F5] rounded-lg">아니오</button>
+        <button onClick={handleJoin} className="bg-[#424242] text-[#FAFAFA] px-10 py-2 rounded-lg">예</button>
       </div>
     </div>
   );
