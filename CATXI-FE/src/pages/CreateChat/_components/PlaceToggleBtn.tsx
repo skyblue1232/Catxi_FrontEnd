@@ -2,8 +2,9 @@ import clsx from "clsx";
 type PlaceToggleBtnProps = {
   value: "in" | "out";
   onChange?: (val: "in" | "out") => void;
+  disabled: boolean;
 };
-const PlaceTogleBtn = ({ value, onChange }: PlaceToggleBtnProps) => {
+const PlaceTogleBtn = ({ value, onChange, disabled }: PlaceToggleBtnProps) => {
   const handleClick = (val: "in" | "out") => {
     onChange?.(val);
   };
@@ -14,9 +15,11 @@ const PlaceTogleBtn = ({ value, onChange }: PlaceToggleBtnProps) => {
           value === "out"
             ? "bg-[#424242] text-[#FEFEFE] rounded-4xl"
             : "text-[#9E9E9E]",
-          "px-3.75 py-1.25 text-sm font-medium cursor-pointer"
+          disabled ? "cursor-default" : "cursor-pointer",
+          "px-3.75 py-1.25 text-sm font-medium"
         )}
         onClick={() => handleClick("out")}
+        disabled={disabled}
       >
         학교 밖
       </button>
@@ -25,9 +28,12 @@ const PlaceTogleBtn = ({ value, onChange }: PlaceToggleBtnProps) => {
           value === "in"
             ? "bg-[#424242] text-[#FEFEFE] rounded-4xl"
             : "text-[#9E9E9E]",
-          "px-3.75 py-1.25 text-sm font-medium cursor-pointer"
+          disabled ? "cursor-default" : "cursor-pointer",
+          "px-3.75 py-1.25 text-sm font-medium",
+          disabled && "disabled"
         )}
         onClick={() => handleClick("in")}
+        disabled={disabled}
       >
         학교 안
       </button>

@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
     if (status === 500) {
       alert("서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
-    return Promise.reject(error);
+    return Promise.reject(data);
   }
 );
 export default axiosInstance;

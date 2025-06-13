@@ -1,8 +1,13 @@
-type AllSetProps = {
-  value: (string | null)[];
-};
-const AllSet = ({ value }: AllSetProps) => {
+import { useChatStore } from "../../../store/createChatStore";
+const AllSet = () => {
+  const { answers } = useChatStore();
   const titles = ["출발지", "도착지", "출발 시간", "모집 인원"];
+  const keys: (keyof typeof answers)[] = [
+    "startPoint",
+    "endPoint",
+    "time",
+    "size",
+  ];
   return (
     <div className="w-full h-full flex flex-col gap-10">
       <div className="flex flex-col gap-2.5">
@@ -22,7 +27,7 @@ const AllSet = ({ value }: AllSetProps) => {
                 className="w-full h-9.75 py-2.5 px-3.75 bg-[#F5F5F5] text-base font-medium text-left flex items-center"
                 key={title}
               >
-                {value[i]}
+                {answers[keys[i]] ?? "-"}
               </div>
             </div>
           );
