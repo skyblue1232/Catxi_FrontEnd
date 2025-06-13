@@ -1,14 +1,10 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useChatStore } from "../../../store/createChatStore";
 type SelectTimeProp = {
-  selectTime: (val: string | null) => void;
-  time: string | null;
+  onOpen: () => void;
 };
-const SelectTime = ({ selectTime, time }: SelectTimeProp) => {
-  const [selected, setSelected] = useState<"today" | "tomorrow">("today");
-  const handleClick = (val: "today" | "tomorrow") => {
-    setSelected(val);
-  };
+const SelectTime = ({ onOpen }: SelectTimeProp) => {
+  const { answers, updateAnswer } = useChatStore();
   return (
     <div className="w-full h-full flex flex-col gap-5 relative">
       <p className="text-xl font-medium">언제 출발하시나요?</p>
@@ -25,33 +21,33 @@ const SelectTime = ({ selectTime, time }: SelectTimeProp) => {
         <div className="w-full flex gap-2.5">
           <button
             className={clsx(
-              selected === "today"
+              answers.isToday === "today"
                 ? "bg-[#424242] text-[#FEFEFE]"
                 : "text-[#9E9E9E] border border-[#E0E0E0]",
               "px-2.5 h-6.75 text-sm font-medium cursor-pointer rounded-sm"
             )}
-            onClick={() => handleClick("today")}
+            onClick={() => updateAnswer("isToday", "today")}
           >
             오늘
           </button>
           <button
             className={clsx(
-              selected === "tomorrow"
+              answers.isToday === "tomorrow"
                 ? "bg-[#424242] text-[#FEFEFE]"
                 : "text-[#9E9E9E] border border-[#E0E0E0]",
               "px-2.5 h-6.75 text-sm font-medium cursor-pointer rounded-sm"
             )}
-            onClick={() => handleClick("tomorrow")}
+            onClick={() => updateAnswer("isToday", "tomorrow")}
           >
             내일
           </button>
         </div>
         <div
           className="w-full h-7.25 flex flex-col gap-5 px-2.5 pb-1.25 border-b-1 border-b-[#E0E0E0] cursor-pointer text-xl font-medium"
-          onClick={() => selectTime(selected)}
+          onClick={() => onOpen?.()}
         >
-          {time ? (
-            <p className="text-[#424242]">{time}</p>
+          {answers.time ? (
+            <p className="text-[#424242]">{answers.time}</p>
           ) : (
             <p className="text-[#9E9E9E]">출발 시간 선택</p>
           )}

@@ -1,24 +1,22 @@
 import Reduce from "../../../assets/icons/reduce.svg?react";
 import Increase from "../../../assets/icons/increase.svg?react";
 import { useState } from "react";
-type SelectMemberProp = {
-  value: string | null;
-  onChange: (val: string | null) => void;
-};
-const SelectMember = ({ onChange, value }: SelectMemberProp) => {
-  const [count, setCount] = useState(Number(value));
+import { useChatStore } from "../../../store/createChatStore";
+const SelectMember = () => {
+  const { answers, updateAnswer } = useChatStore();
+  const [count, setCount] = useState(answers.size);
   const handleIncrease = () => {
     if (count < 3) {
       const newCount = count + 1;
       setCount(newCount);
-      onChange(newCount.toString());
+      updateAnswer("size", newCount);
     }
   };
   const handleDecrease = () => {
     if (count > 0) {
       const newCount = count - 1;
       setCount(newCount);
-      onChange(newCount === 0 ? null : newCount.toString());
+      updateAnswer("size", newCount === 0 ? 0 : newCount);
     }
   };
   return (
@@ -38,7 +36,7 @@ const SelectMember = ({ onChange, value }: SelectMemberProp) => {
           >
             <Reduce />
           </button>
-          <p className="text-[22px] font-medium">{value ?? 0}</p>
+          <p className="text-[22px] font-medium">{answers.size}</p>
           <button
             className="h-6.25 w-6.25 flex justify-center items-center rounded-full cursor-pointer bg-[#3574FF]"
             disabled={count === 3}

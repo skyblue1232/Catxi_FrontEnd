@@ -7,4 +7,10 @@ export const IN_CAMPUS_PLACES = [
   "콘서트홀",
 ];
 
-export const OUT_CAMPUS_PLACES = ["역곡역", "소사역", "부천역"];
+export const OUT_CAMPUS_PLACES = [
+  "역곡역",
+  "소사역",
+  "부천역",
+  "구로역",
+  "신도림역",
+];
