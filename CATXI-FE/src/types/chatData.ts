@@ -29,6 +29,7 @@ export interface ChatMessageItem {
   roomId: number;
   senderId: number;
   senderName: string;
+  senderEmail: string;
   content: string;
   sentAt: string;
 };

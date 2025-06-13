@@ -12,5 +12,5 @@ export const getDepartText = (departAt: string) => {
 
   if (diffInDays === 0) return '오늘 출발';
   if (diffInDays === 1) return '내일 출발';
-  return '출발 예정';
+  return '보류';
 };

@@ -17,7 +17,7 @@ export const useChatRooms = (params: GetChatRoomsParams) => {
     refetchOnWindowFocus: false, 
     refetchOnReconnect: false,
     refetchOnMount: false, 
-    retry: 0, 
+    retry: 1, 
     enabled: !!params.direction && !!params.station && !!params.sort, 
   });
 };
