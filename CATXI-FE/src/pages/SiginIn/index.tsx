@@ -2,12 +2,18 @@ import { useState } from "react";
 import LoginCheck from "../../assets/icons/loginCheck.svg?react";
 import clsx from "clsx";
 import { useSignin } from "../../hooks/useSignIn";
+import { useCheckNN } from "../../hooks/query/useCheckNN";
 const SignIn = () => {
   const { signIn } = useSignin();
   const [nickName, setNickName] = useState("");
+  const { data, refetch } = useCheckNN(nickName);
   const [studentId, setStudentId] = useState("");
-  // const [nameChecked, setNameChecked] = useState(false);
+  const [nameChecked, setNameChecked] = useState(false);
   const isValid = nickName && studentId;
+  const handleDBCheck = async () => {
+    await refetch();
+    setNameChecked(true);
+  };
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] justify-between pt-15.25 px-7.5 relative bg-[#FAFAFA]">
       <div className="flex flex-col gap-10">
@@ -42,12 +48,13 @@ const SignIn = () => {
                       ? "text-[#9E9E9E] bg-[#E0E0E0]"
                       : "bg-[#7424F5] text-[#FAFAFA] cursor-pointer"
                   )}
+                  onClick={handleDBCheck}
                 >
                   중복확인
                 </button>
               </div>
-              {/* {nameChecked &&
-                (nameError ? (
+              {nameChecked &&
+                (data ? (
                   <p className="text-xs text-[#FF5252]">
                     이미 사용 중인 닉네임입니다.
                   </p>
@@ -55,7 +62,7 @@ const SignIn = () => {
                   <p className="text-xs text-[#3574FF]">
                     사용 가능한 닉네임입니다.
                   </p>
-                ))} */}
+                ))}
             </div>
           </div>
           <div className="flex flex-col gap-2.5">

@@ -1,9 +1,17 @@
 import RecordCard from "./_components/RecordCard";
 import { useGetHistory, useGetMyPage } from "../../hooks/query/useMyPage";
+import { useDeleteUser } from "../../hooks/mutation/sse/useDeleteUser";
 const MyPage = () => {
   const { data } = useGetMyPage();
   const { data: historyData } = useGetHistory();
+  const { deleteUser } = useDeleteUser();
   const { membername, studentNo, matchCount } = data?.data || {};
+  const handleDeleteUser = async () => {
+    const isConfirmed = confirm("회원 탈퇴를 진행하시겠습니까?");
+    if (isConfirmed) {
+      await deleteUser();
+    }
+  };
   return (
     <div className="bg-[#FAFAFA] w-full h-full relative">
       <div className="bg-[#FEFEFE] h-16.5 w-full shadow-[0_4px_5px_0_rgba(0,0,0,0.05)] relative flex justify-center items-center">
@@ -15,7 +23,10 @@ const MyPage = () => {
             <p className="text-[22px] font-medium text-[#424242]">
               {membername} 님
             </p>
-            <p className="text-xs font-normal text-[#9E9E9E] cursor-pointer">
+            <p
+              className="text-xs font-normal text-[#9E9E9E] cursor-pointer"
+              onClick={() => handleDeleteUser()}
+            >
               회원 탈퇴하기
             </p>
           </div>
