@@ -28,7 +28,7 @@ export const fetchChatRooms = async ({
   return data;
 };
 
-export const joinChatRoom = async (roomId: string) => {
+export const joinChatRoom = async (roomId: number) => {
   const { data } = await axiosInstance.post(`/chat/rooms/${roomId}/join`);
   return data;
 };

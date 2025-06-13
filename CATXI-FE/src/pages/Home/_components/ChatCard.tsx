@@ -3,19 +3,25 @@ import ChatJoinButton from "./ChatJoinButton";
 import type { ChatRoomItem } from "../../../types/chatData";
 import { stationDisplayMap } from "../../../constants/stationMap";
 import { getDepartText } from "../../../utils/date";
+import { useModal } from "../../../contexts/ModalContext";
+import JoinChatModalContent from "./JoinChatModal";
 
-interface Props { 
+interface Props {
   data: ChatRoomItem;
-  onClick: () => void;
 }
 
-const ChatCard = ({ data, onClick }: Props) => {
+const ChatCard = ({ data }: Props) => {
+  const { openModal } = useModal();
+
+  const handleJoinClick = () => {
+    openModal(
+      <JoinChatModalContent roomId={data.roomId} />
+    );
+  };
+
   return (
     <CommonCard size="default">
-      <div
-        className="rounded-lg p-[1.719rem] bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] transition cursor-pointer"
-        onClick={onClick}
-      >
+      <div className="rounded-lg p-[1.719rem] bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] transition cursor-pointer">
         <div className="flex justify-between items-center">
           <div className="flex flex-col p-2">
             <span className="font-medium text-[14px]">{data.hostName}</span>
@@ -24,7 +30,7 @@ const ChatCard = ({ data, onClick }: Props) => {
           <span className="text-xs text-[#8C46F6] font-medium">{getDepartText(data.departAt)}</span>
         </div>
 
-        <div className="w-full bg-[#E0E0E0] h-[1px] my-[0.938rem]"></div>
+        <div className="w-full bg-[#E0E0E0] h-[1px] my-[0.938rem]" />
 
         <div className="flex justify-between items-center ml-[2.406rem]">
           <div className="flex flex-col gap-[0.5rem]">
@@ -50,9 +56,9 @@ const ChatCard = ({ data, onClick }: Props) => {
               <span className="font-regular">출발시간</span>
               <span className="font-medium text-[14px]">
                 {(() => {
-                  const [date, time] = data.departAt.split('T');
-                  const [_year, month, day] = date.split('-');
-                  const [hour, minute] = time.split(':');
+                  const [date, time] = data.departAt.split("T");
+                  const [_year, month, day] = date.split("-");
+                  const [hour, minute] = time.split(":");
                   return (
                     <>
                       {`${Number(month)}월 ${Number(day)}일`}<br />
@@ -63,19 +69,19 @@ const ChatCard = ({ data, onClick }: Props) => {
               </span>
             </div>
 
-            <div className="self-center justify-center w-[1px] h-[1.5rem] bg-[#E0E0E0]"></div>
+            <div className="self-center justify-center w-[1px] h-[1.5rem] bg-[#E0E0E0]" />
 
             <div className="flex flex-col ml-[1.25rem]">
               <span>모집인원</span>
               <span className="flex justify-center">
-                <span className="font-bold text-[12px] ">{data.currentSize}</span>
+                <span className="font-bold text-[12px]">{data.currentSize}</span>
                 /{data.recruitSize}
               </span>
             </div>
           </div>
 
           <div className="mt-[1.25rem]">
-            <ChatJoinButton status={data.status} onClick={onClick} />
+            <ChatJoinButton status={data.status} onClick={handleJoinClick} />
           </div>
         </div>
       </div>

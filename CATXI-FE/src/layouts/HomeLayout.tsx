@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import TabBar from "../components/Tab/TabBar";
-import CommonModal from "../components/Modal/UserModal";
 import { ModalProvider } from "../contexts/ModalContext";
 
 const HomeLayout = () => {
@@ -17,7 +16,6 @@ const HomeLayout = () => {
       >
         <Outlet />
         <TabBar />
-        <CommonModal />
       </div>
     </ModalProvider>
   );

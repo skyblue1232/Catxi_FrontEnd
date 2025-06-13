@@ -3,7 +3,7 @@ import { joinChatRoom } from "../../../apis/chatRooms";
 
 export const useJoinChatRoom = () => {
   return useMutation({
-    mutationFn: (roomId: string) => joinChatRoom(roomId),
+    mutationFn: (roomId: number) => joinChatRoom(roomId),
     onSuccess: (data) => {
       console.log(data);
     },
