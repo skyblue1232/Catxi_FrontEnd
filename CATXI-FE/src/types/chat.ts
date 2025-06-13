@@ -4,4 +4,5 @@ export interface ChatMessage {
   timestamp?: string;
   email: string;
   roomId: string;
+  isMine: boolean;
 }

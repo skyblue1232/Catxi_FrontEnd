@@ -16,8 +16,8 @@ const LocationFilter: React.FC<Props> = ({
   onSelectSort,
 }) => {
   return (
-    <div className="flex justify-between items-center ml-[1.625rem]">
-      <div className="flex mt-[1.125rem] gap-[0.5rem]">
+    <div className="flex justify-between items-center px-[1.5rem] mt-[1.125rem] ">
+      <div className="flex gap-[0.5rem]">
         {locations.map((loc) => (
           <button
             key={loc}
@@ -33,8 +33,7 @@ const LocationFilter: React.FC<Props> = ({
         ))}
       </div>
 
-      {/* 정렬 */}
-      <div className="flex items-center gap-[0.5rem] mr-[1.625rem]">
+      <div className="flex items-center gap-[0.5rem]">
         <span
           className={`text-[14px] cursor-pointer ${
             sort === 'departAt' ? 'text-black font-bold' : 'text-[#9E9E9E]'
