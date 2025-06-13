@@ -13,8 +13,8 @@ export const Login = () => {
   };
   return (
     <div className="w-full h-full px-6.5 flex flex-col items-center justify-center bg-[#FAFAFA]">
-      <div className="flex flex-col items-center mb-[156px]">
-        <div className="mb-5">
+      <div className="flex flex-col items-center mb-[136px]">
+        <div className="mb-2.5">
           <Logo />
         </div>
         <p className="text-[15px] text-[#424242] font-normal mb-1.25">
