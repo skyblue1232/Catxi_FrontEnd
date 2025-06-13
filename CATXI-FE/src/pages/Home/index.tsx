@@ -1,8 +1,8 @@
+import { useState, useEffect } from 'react';
 import CategoryTab from './_components/CategoryTab';
 import LocationFilter from './_components/LocationFilter';
 import ChatCardList from './_components/ChatCardList';
 import FloatingButton from './_components/FloatingButton';
-import { useState } from 'react';
 
 const HomePage = () => {
   const [direction, setDirection] = useState<'FROM_SCHOOL' | 'TO_SCHOOL'>('FROM_SCHOOL');
@@ -12,6 +12,10 @@ const HomePage = () => {
   });
   const [sort, setSort] = useState<'departAt' | 'createdTime'>('departAt');
   const page = 0;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleSelectLocation = (location: string) => {
     setSelectedLocations((prev) => ({

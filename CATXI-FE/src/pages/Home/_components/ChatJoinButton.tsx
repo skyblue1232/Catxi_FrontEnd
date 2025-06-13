@@ -17,7 +17,7 @@ const ChatJoinButton = ({ status, onClick }: Props) => {
     <button
       disabled={isDisabled}
       onClick={onClick}
-      className={`ml-[1.25rem] py-[0.531rem] px-[1.75rem] rounded-[6px] text-[14px] ${
+      className={`py-[0.65rem] px-[2rem] rounded-[6px] text-[14px] ${
         isDisabled
           ? "bg-[#E0E0E0] text-white cursor-not-allowed"
           : "bg-[#7424F5] text-white"

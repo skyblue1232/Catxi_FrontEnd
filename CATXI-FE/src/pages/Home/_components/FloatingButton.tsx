@@ -5,7 +5,7 @@ const FloatingButton = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/app/createChat');
+    navigate('/createChat');
   };
   
   return (

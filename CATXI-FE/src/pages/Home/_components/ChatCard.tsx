@@ -30,7 +30,7 @@ const ChatCard = ({ data, onClick }: Props) => {
           <div className="flex flex-col gap-[0.5rem]">
             <span className="flex justify-center">출발지</span>
             <span className="text-[18px] font-medium">
-              {stationDisplayMap[data.startPoint] || data.startPoint}
+              {stationDisplayMap[data.startPoint.toUpperCase()] || data.startPoint}
             </span>
           </div>
 
@@ -39,30 +39,42 @@ const ChatCard = ({ data, onClick }: Props) => {
           <div className="flex flex-col gap-[0.5rem] mr-[2.406rem]">
             <span className="flex justify-center">도착지</span>
             <span className="text-[18px] font-medium">
-              {stationDisplayMap[data.endPoint] || data.endPoint}
+              {stationDisplayMap[data.endPoint.toUpperCase()] || data.endPoint}
             </span>
           </div>
         </div>
 
         <div className="flex justify-between mt-[1.25rem]">
-          <div className="flex items-center px-[0.063rem] text-[12px]">
+          <div className="flex items-center px-[0.05rem] text-[12px]">
             <div className="flex flex-col mr-[1.25rem]">
               <span className="font-regular">출발시간</span>
-              <span className="font-medium text-[14px]">{data.departAt}</span>
+              <span className="font-medium text-[14px]">
+                {(() => {
+                  const [date, time] = data.departAt.split('T');
+                  const [_year, month, day] = date.split('-');
+                  const [hour, minute] = time.split(':');
+                  return (
+                    <>
+                      {`${Number(month)}월 ${Number(day)}일`}<br />
+                      {`${hour}:${minute}`}
+                    </>
+                  );
+                })()}
+              </span>
             </div>
 
-            <div className="self-center justify-center w-[1px] h-[1.25rem] bg-[#E0E0E0]"></div>
+            <div className="self-center justify-center w-[1px] h-[1.5rem] bg-[#E0E0E0]"></div>
 
             <div className="flex flex-col ml-[1.25rem]">
               <span>모집인원</span>
               <span className="flex justify-center">
-                <span className="font-medium text-[14px] mx-[2px]">{data.currentSize}</span>
+                <span className="font-bold text-[12px] ">{data.currentSize}</span>
                 /{data.recruitSize}
               </span>
             </div>
           </div>
 
-          <div>
+          <div className="mt-[1.25rem]">
             <ChatJoinButton status={data.status} onClick={onClick} />
           </div>
         </div>
