@@ -7,12 +7,24 @@ interface Props {
   sentAt: string;
 }
 
-const maskEmailName = (email: string | null | undefined) => {
-  if (!email) return "";
-  const localPart = email.split("@")[0];
-  if (localPart.length === 1) return localPart;
-  if (localPart.length === 2) return `${localPart[0]}*`;
-  return `${localPart[0]}*${localPart[2]}`;
+const maskName = (identifier: string | null | undefined) => {
+  if (!identifier) return "";
+
+  const isEmail = identifier.includes("@");
+  if (isEmail) {
+    const localPart = identifier.split("@")[0];
+    if (localPart.length === 1) return localPart;
+    if (localPart.length === 2) return `${localPart[0]}*`;
+    return `${localPart[0]}*${localPart[2]}`;
+  } else {
+    if (identifier.length <= 2) {
+      return identifier[0] + "*";
+    }
+    const first = identifier[0];
+    const last = identifier[identifier.length - 1];
+    const middle = "*".repeat(identifier.length - 2);
+    return `${first}${middle}${last}`;
+  }
 };
 
 const formatTimestamp = (sentAt: string) => {
@@ -32,7 +44,7 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
   const handleNameClick = () => {
     openModal(
       <div>
-        <h2 className="text-lg font-bold text-center">{maskEmailName(email)}</h2>
+        <h2 className="text-lg font-bold text-center">{maskName(email)}</h2>
         <div className="flex justify-center gap-2 mt-4">
           <button
             onClick={closeModal}
@@ -51,7 +63,7 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
         className="text-xs text-gray-600 mb-1 cursor-pointer hover:underline"
         onClick={handleNameClick}
       >
-        {maskEmailName(email)}
+        {maskName(email)}
       </p>
 
       <div className={`inline-flex items-end gap-[0.625rem] ${isMe ? "justify-end" : "justify-start"}`}>

@@ -5,4 +5,5 @@ export interface ChatMessage {
   sentAt: string;
   roomId: string;
   isMine?: boolean;
+  messageId?: number;
 }
