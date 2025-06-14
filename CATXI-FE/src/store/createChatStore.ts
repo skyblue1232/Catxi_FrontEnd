@@ -13,6 +13,7 @@ interface Answers {
 interface createChatStore {
   answers: Answers;
   updateAnswer: <K extends keyof Answers>(key: K, value: Answers[K]) => void;
+  clearAnswer: () => void;
 }
 
 export const useChatStore = create<createChatStore>((set) => ({
@@ -30,6 +31,18 @@ export const useChatStore = create<createChatStore>((set) => ({
       answers: {
         ...state.answers,
         [key]: value,
+      },
+    })),
+  clearAnswer: () =>
+    set(() => ({
+      answers: {
+        start: "out",
+        end: "out",
+        startPoint: "",
+        endPoint: "",
+        time: "",
+        isToday: "today",
+        size: 0,
       },
     })),
 }));
