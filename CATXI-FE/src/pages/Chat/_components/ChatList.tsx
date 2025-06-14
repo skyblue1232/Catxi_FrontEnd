@@ -4,17 +4,16 @@ import type { ChatMessage } from "../../../types/chat";
 
 interface Props {
   messages: ChatMessage[];
-  memberId: number;
 }
-
-const ChatList = ({ messages, memberId }: Props) => {
+ 
+const ChatList = ({ messages }: Props) => {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTo({
         top: listRef.current.scrollHeight,
-        behavior: "smooth" 
+        behavior: "smooth",
       });
     }
   }, [messages]);
@@ -22,14 +21,15 @@ const ChatList = ({ messages, memberId }: Props) => {
   return (
     <div
       ref={listRef}
-      className="flex-1 overflow-y-auto space-y-4 mb-24 custom-scrollbar"
+      className="flex-1 overflow-y-auto space-y-4 custom-scrollbar"
     >
       {messages.map((msg, idx) => (
         <ChatItem
           key={idx}
           message={msg.message}
-          isMe={String(msg.sender) === String(memberId)}
+          isMe={msg.isMine ?? false} 
           email={msg.email}
+          sentAt={msg.sentAt}
         />
       ))}
     </div>

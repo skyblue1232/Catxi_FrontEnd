@@ -1,8 +1,8 @@
 export interface ChatMessage {
   message: string;
   sender?: number;
-  timestamp?: string;
   email: string;
+  sentAt: string;
   roomId: string;
-  isMine: boolean;
+  isMine?: boolean;
 }
