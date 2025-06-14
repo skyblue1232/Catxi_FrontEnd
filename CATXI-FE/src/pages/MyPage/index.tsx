@@ -1,10 +1,19 @@
 import RecordCard from "./_components/RecordCard";
 import { useGetHistory, useGetMyPage } from "../../hooks/query/useMyPage";
 import { useDeleteUser } from "../../hooks/mutation/sse/useDeleteUser";
+import { useEffect, useRef } from "react";
 const MyPage = () => {
   const { data } = useGetMyPage();
-  const { data: historyData } = useGetHistory();
   const { deleteUser } = useDeleteUser();
+  const {
+    data: historyData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetHistory();
+
+  const allHistory = historyData?.pages.flatMap((page) => page.content) ?? [];
+
   const { membername, studentNo, matchCount } = data?.data || {};
   const handleDeleteUser = async () => {
     const isConfirmed = confirm("회원 탈퇴를 진행하시겠습니까?");
@@ -12,6 +21,28 @@ const MyPage = () => {
       await deleteUser();
     }
   };
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    const target = bottomRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [bottomRef, hasNextPage, fetchNextPage]);
+
   return (
     <div className="bg-[#FAFAFA] w-full h-full relative">
       <div className="bg-[#FEFEFE] h-16.5 w-full shadow-[0_4px_5px_0_rgba(0,0,0,0.05)] relative flex justify-center items-center">
@@ -48,9 +79,25 @@ const MyPage = () => {
         </div>
         <div className="flex flex-col gap-5">
           <p className="text-lg font-medium text-[#424242]">내 이용 기록</p>
-          {historyData?.map((item, i) => (
-            <RecordCard key={i} {...item} />
-          ))}
+
+          {allHistory.length === 0 ? (
+            <div className="text-sm text-[#9E9E9E] text-center py-10">
+              아직 이용한 채팅방 기록이 없어요
+            </div>
+          ) : (
+            <>
+              {allHistory.map((item, i) => (
+                <RecordCard key={i} {...item} />
+              ))}
+              <div ref={bottomRef} className="h-6" />
+              {isFetchingNextPage && (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-8 h-8 border-4 border-[#8C46F6] border-t-transparent rounded-full animate-spin" />
+                  <p className="text-sm text-[#6d6d6d]">로딩 중입니다...</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
