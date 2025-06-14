@@ -10,9 +10,8 @@ const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
 export function useChatSocket(
   roomId: string,
-  memberId: number,
   jwtToken: string,
-  email: string,
+  myEmail: string,
   onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
 ) {
   const stompClientRef = useRef<Client | null>(null);
@@ -24,15 +23,15 @@ export function useChatSocket(
       chatHistory.data.forEach((msg: ChatMessageItem) => {
         const convertedMsg: ChatMessage = {
           message: msg.content,
-          sender: msg.senderId,
-          email: msg.senderName,
+          email: msg.senderEmail,
           roomId: String(msg.roomId),
-          timestamp: msg.sentAt,
+          sentAt: msg.sentAt,
+          isMine: msg.senderEmail === myEmail,
         };
         onMessage(convertedMsg, { isHistory: true });
       });
     }
-  }, [chatHistory, onMessage]);
+  }, [chatHistory, onMessage, myEmail]);
 
   const connect = useCallback(() => {
     if (stompClientRef.current) {
@@ -52,14 +51,14 @@ export function useChatSocket(
         subscriptionRef.current = stompClient.subscribe(
           `/topic/${roomId}`,
           (message) => {
-            const parsed = JSON.parse(message.body) as Partial<ChatMessage>;
+            const parsed = JSON.parse(message.body) as any;
 
             const msg: ChatMessage = {
               message: parsed.message!,
-              email: parsed.email!,
+              email: parsed.senderEmail ?? parsed.email, 
               roomId: parsed.roomId!,
-              timestamp: parsed.timestamp!,
-              sender: parsed.email === email ? memberId : -1, 
+              sentAt: parsed.sentAt,
+              isMine: parsed.email === myEmail, 
             };
 
             onMessage(msg);
@@ -73,7 +72,7 @@ export function useChatSocket(
     );
 
     stompClientRef.current = stompClient;
-  }, [roomId, memberId, jwtToken, onMessage]);
+  }, [roomId, jwtToken, myEmail, onMessage]);
 
   const disconnect = useCallback(() => {
     subscriptionRef.current?.unsubscribe();
@@ -84,13 +83,30 @@ export function useChatSocket(
 
   const sendMessage = useCallback(
     (message: string) => {
+      const utcNow = new Date();
+      const sentAtCustom = new Date(utcNow.getTime() - 9 * 60 * 60 * 1000).toISOString();;
+      const sentAtKST = new Date(utcNow.getTime() + 9 * 60 * 60 * 1000).toISOString();
       const outgoingMsg = {
         message,
-        email,
+        email: myEmail,
         roomId,
+        sentAt: sentAtKST,
       };
 
-      if (stompClientRef.current?.connect) {
+      console.log(sentAtKST);
+
+      onMessage(
+      {
+        message,
+        email: myEmail,
+        roomId,
+        sentAt: sentAtCustom,
+        isMine: true,
+      },
+      { isHistory: false }
+    );
+
+      if (stompClientRef.current?.connected) {
         stompClientRef.current.send(
           `/publish/${roomId}`,
           JSON.stringify(outgoingMsg),
@@ -100,16 +116,16 @@ export function useChatSocket(
         console.warn("WebSocket 연결이 진행 중");
       }
     },
-    [roomId, memberId, email, jwtToken, onMessage]
+    [roomId, myEmail, jwtToken, onMessage]
   );
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !myEmail) return;
     connect();
     return () => {
       disconnect();
     };
-  }, [roomId, connect, disconnect]);
+  }, [roomId, myEmail, connect, disconnect]);
 
   return { connect, disconnect, sendMessage };
-}
+}; 
