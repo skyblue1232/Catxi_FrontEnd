@@ -1,5 +1,5 @@
 import { getMyPageList } from "./../../apis/myPage";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type { GetMemberResponse } from "../../types/myPage";
 import type { GetHistoryResponse } from "../../types/history";
 import { getHistoryList } from "../../apis/history";
@@ -12,8 +12,17 @@ export const useGetMyPage = () => {
 };
 
 export const useGetHistory = () => {
-  return useQuery<GetHistoryResponse, Error>({
+  return useInfiniteQuery<GetHistoryResponse, Error>({
     queryKey: ["history"],
-    queryFn: () => getHistoryList(),
+    queryFn: ({ pageParam = 0 }) =>
+      getHistoryList({
+        page: pageParam as number,
+        size: 2,
+        sort: "createdAt,desc",
+      }),
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.last ? undefined : pages.length;
+    },
+    initialPageParam: 0,
   });
 };

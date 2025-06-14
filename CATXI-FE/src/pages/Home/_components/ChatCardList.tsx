@@ -36,7 +36,7 @@ const ChatCardList = ({
   if (!data?.data.content.length) {
     return (
       <div className="flex justify-center items-center p-4 h-[60vh]">
-        <div className="flex flex-col justify-center items-center gap-2 text-[#424242d6]">
+        <div className="flex flex-col justify-center items-center gap-2 text-[#9E9E9E]">
           <NoContent />
           <p>아직 생성된 채팅방이 없어요</p>
           <p>새로운 대화를 시작해보세요!</p>
