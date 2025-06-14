@@ -1,8 +1,8 @@
-import { useChatRooms } from '../../../hooks/query/useChatRooms';
-import ChatCard from './ChatCard';
-import type { ChatRoomItem } from '../../../types/chatData';
-import LogoText from '../../../assets/icons/logoText.svg?react';
-
+import { useChatRooms } from "../../../hooks/query/useChatRooms";
+import ChatCard from "./ChatCard";
+import type { ChatRoomItem } from "../../../types/chatData";
+import LogoText from "../../../assets/icons/logoText.svg?react";
+import NoContent from "../../../assets/icons/noContent.svg?react";
 interface ChatCardListProps {
   direction: string;
   station: string;
@@ -22,7 +22,6 @@ const ChatCardList = ({
     sort,
     page,
   });
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -34,6 +33,17 @@ const ChatCardList = ({
     );
   }
 
+  if (!data?.data.content.length) {
+    return (
+      <div className="flex justify-center items-center p-4 h-[60vh]">
+        <div className="flex flex-col justify-center items-center gap-2 text-[#424242d6]">
+          <NoContent />
+          <p>아직 생성된 채팅방이 없어요</p>
+          <p>새로운 대화를 시작해보세요!</p>
+        </div>
+      </div>
+    );
+  }
   if (isError) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
