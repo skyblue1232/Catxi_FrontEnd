@@ -38,6 +38,7 @@ export interface ChatRoomItem {
     roomId: number;
     hostId: number;
     hostName: string;
+    hostNickname: string;
     matchCount: number,
     startPoint: string;
     endPoint: string;
