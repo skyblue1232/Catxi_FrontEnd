@@ -19,12 +19,18 @@ const ChatCard = ({ data }: Props) => {
     );
   };
 
+  const maskName = (name: string) => {
+    if (name.length <= 1) return name;
+    const mid = Math.floor(name.length / 2);
+    return name.substring(0, mid) + '*' + name.substring(mid + 1);
+  };
+
   return (
     <CommonCard size="default">
       <div className="rounded-lg p-[1.719rem] bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] transition cursor-pointer">
         <div className="flex justify-between items-center">
           <div className="flex flex-col p-2">
-            <span className="font-medium text-[14px]">{data.hostName}</span>
+            <span className="font-medium text-[14px]">{`${maskName(data.hostName)}(${data.hostNickname})`}</span>
             <span className="font-regular text-[12px]">매칭 성공 {data.matchCount}회</span>
           </div>
           <span className="text-xs text-[#8C46F6] font-medium">{getDepartText(data.departAt)}</span>
@@ -73,9 +79,8 @@ const ChatCard = ({ data }: Props) => {
 
             <div className="flex flex-col ml-[1.25rem]">
               <span>모집인원</span>
-              <span className="flex justify-center">
-                <span className="font-bold text-[12px]">{data.currentSize}</span>
-                /{data.recruitSize}
+              <span className="flex justify-center font-medium">
+                <span className="font-medium text-[13px] mb-1">{data.currentSize}</span>/{data.recruitSize}
               </span>
             </div>
           </div>

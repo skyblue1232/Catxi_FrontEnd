@@ -7,8 +7,8 @@ import FloatingButton from './_components/FloatingButton';
 const HomePage = () => {
   const [direction, setDirection] = useState<'FROM_SCHOOL' | 'TO_SCHOOL'>('FROM_SCHOOL');
   const [selectedLocations, setSelectedLocations] = useState<Record<'FROM_SCHOOL' | 'TO_SCHOOL', string | null>>({
-    FROM_SCHOOL: null,
-    TO_SCHOOL: null,
+    FROM_SCHOOL: 'YEOKGOK_ST',
+    TO_SCHOOL: 'YEOKGOK_ST',
   });
   const [sort, setSort] = useState<'departAt' | 'createdTime'>('departAt');
   const page = 0;

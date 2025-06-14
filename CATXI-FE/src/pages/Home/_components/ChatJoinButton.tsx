@@ -6,7 +6,7 @@ interface Props {
 }
 
 const ChatJoinButton = ({ status, onClick }: Props) => {
-  const isJoinable = status === "READY_LOCKED" || status === undefined;
+  const isJoinable = status === "WAITING" || status === undefined;
   const isDisabled = !isJoinable;
 
   const displayText = isJoinable

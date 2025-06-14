@@ -3,6 +3,7 @@ import ChatCard from "./ChatCard";
 import type { ChatRoomItem } from "../../../types/chatData";
 import LogoText from "../../../assets/icons/logoText.svg?react";
 import NoContent from "../../../assets/icons/noContent.svg?react";
+
 interface ChatCardListProps {
   direction: string;
   station: string;
@@ -16,12 +17,13 @@ const ChatCardList = ({
   sort,
   page = 0,
 }: ChatCardListProps) => {
-  const { data, isLoading, isError, refetch } = useChatRooms({
+  const { data, isLoading, isError } = useChatRooms({
     direction,
     station,
     sort,
     page,
   });
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -33,7 +35,29 @@ const ChatCardList = ({
     );
   }
 
-  if (!data?.data.content.length) {
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <LogoText className="w-[140px] h-auto" />
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
+          >
+            retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const chatRooms = (data?.data?.content || []).filter((room: ChatRoomItem) => {
+    const now = new Date().getTime();
+    const depart = new Date(room.departAt).getTime();
+    return depart > now; 
+  });
+
+  if (!chatRooms.length) {
     return (
       <div className="flex justify-center items-center p-4 h-[60vh]">
         <div className="flex flex-col justify-center items-center gap-2 text-[#9E9E9E]">
@@ -44,23 +68,6 @@ const ChatCardList = ({
       </div>
     );
   }
-  if (isError) {
-    return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <LogoText className="w-[140px] h-auto" />
-          <button
-            onClick={() => refetch()}
-            className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
-          >
-            retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const chatRooms = data?.data?.content || [];
 
   return (
     <div className="mt-4 flex flex-col gap-4">
