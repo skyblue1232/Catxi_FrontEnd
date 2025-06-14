@@ -3,7 +3,7 @@ export interface ChatMessage {
   sender?: number;
   email: string;
   sentAt: string;
-  roomId: string;
+  roomId: number;
   isMine?: boolean;
   messageId?: number;
 }
