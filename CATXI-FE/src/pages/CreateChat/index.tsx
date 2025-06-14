@@ -10,8 +10,10 @@ import { useChatStore } from "../../store/createChatStore";
 import { useCreateChat } from "../../hooks/mutation/sse/useCreateChat";
 import { labelToLocationMap } from "../MyPage/_utils/location";
 import { parseTimeToISOString } from "./_constants/time";
+import { useNavigate } from "react-router-dom";
 const CreateChat = () => {
-  const { answers } = useChatStore();
+  const navigate = useNavigate();
+  const { answers, clearAnswer } = useChatStore();
   const { startPoint, endPoint, size, isToday, time } = answers;
   const { createChatRoom } = useCreateChat();
   const [allSet, setAllSet] = useState(false);
@@ -50,6 +52,17 @@ const CreateChat = () => {
       setCurrent(next);
     }
   };
+  const handleRouteMove = () => {
+    if (startPoint) {
+      const isConfirmed = confirm(
+        "현재 입력하신 내용이 저장되지 않았습니다.\n페이지를 나가시겠어요?"
+      );
+      if (isConfirmed) {
+        clearAnswer();
+        navigate("/home");
+      }
+    } else navigate("/home");
+  };
   return (
     <div className="w-full h-full relative">
       <div className="h-16.5 w-full border-b-2 border-b-[#E0E0E0] relative flex justify-center items-center">
@@ -57,7 +70,10 @@ const CreateChat = () => {
           className="absolute -bottom-0.5 left-0 h-0.5 bg-[#7424F5] transition-all duration-300"
           style={{ width: progressWidth }}
         />
-        <div className="absolute top-1/2 -translate-y-1/2 left-6.5 cursor-pointer">
+        <div
+          className="absolute top-1/2 -translate-y-1/2 left-6.5 cursor-pointer"
+          onClick={handleRouteMove}
+        >
           <Arrow />
         </div>
         <p className="font-regular text-xl font-medium">채팅방 생성</p>
