@@ -14,11 +14,13 @@ import MyPage from "./pages/MyPage";
 import Redirection from "./pages/Redirect";
 import HomePage from "./pages/Home";
 import { AuthCheck } from "./utils/authCheck";
+import GlobalErrorPage from "./layouts/GlobalErrorPage";
 
 const publicRoutes = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout />,
+    errorElement: <GlobalErrorPage />,
     children: [
       { index: true, element: <Login />, handle: { isPublic: true } },
       {
