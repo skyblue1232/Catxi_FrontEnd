@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchChatRooms } from '../../apis/chatRooms';
+import { fetchChatRooms } from '../../apis/chat/chatRooms';
 import type { ChatRoomResponse } from '../../types/chatData';
 
 interface GetChatRoomsParams {

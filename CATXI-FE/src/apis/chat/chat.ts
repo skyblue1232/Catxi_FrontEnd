@@ -1,5 +1,5 @@
-import axiosInstance from './axios';
-import type { ChatMessagesResponse } from '../types/chatData';
+import axiosInstance from '../axios';
+import type { ChatMessagesResponse } from '../../types/chatData';
 
 export const fetchChatMessages = async (roomId: number): Promise<ChatMessagesResponse> => {
   const response = await axiosInstance.get<ChatMessagesResponse>(

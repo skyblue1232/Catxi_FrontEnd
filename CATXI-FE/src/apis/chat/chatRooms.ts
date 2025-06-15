@@ -1,5 +1,5 @@
-import type { ChatRoomResponse } from '../types/chatData';
-import axiosInstance from "./axios";
+import type { ChatRoomItem, ChatRoomResponse } from '../../types/chatData';
+import axiosInstance from '../axios';
 
 interface GetChatRoomsParams {
   direction: string;
@@ -30,6 +30,6 @@ export const fetchChatRooms = async ({
 
 export const joinChatRoom = async (roomId: number) => {
   const { data } = await axiosInstance.post(`/chat/rooms/${roomId}/join`);
-  return data;
+  return data as ChatRoomItem;
 };
 

@@ -6,4 +6,5 @@ export interface ChatMessage {
   roomId: number;
   isMine?: boolean;
   messageId?: number;
+  senderName?: string;
 }
