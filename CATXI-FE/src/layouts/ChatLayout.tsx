@@ -59,7 +59,7 @@ const ChatLayout = () => {
 
   if (!roomId || isLoading) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div className="flex justify-center items-center h-[90vh]">
         <div className="flex flex-col items-center gap-2">
           <div className="w-8 h-8 border-4 border-[#8C46F6] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-600">로딩 중입니다...</p>
@@ -70,7 +70,7 @@ const ChatLayout = () => {
 
   if (isError || !chatRoomDetail?.data) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div className="flex justify-center items-center h-[90vh]">
         <div className="flex flex-col items-center gap-4 text-center">
           <LogoText className="w-[140px] h-auto" />
           <button
