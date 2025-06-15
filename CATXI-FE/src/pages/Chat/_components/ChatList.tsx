@@ -21,7 +21,7 @@ const ChatList = ({ messages }: Props) => {
   return (
     <div
       ref={listRef}
-      className="flex-1 overflow-y-auto space-y-4 custom-scrollbar"
+      className="flex-1 overflow-y-auto space-y-4 mb-17 pb-4 custom-scrollbar"
     >
       {messages.map((msg, idx) => (
         <ChatItem
