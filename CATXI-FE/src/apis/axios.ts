@@ -22,9 +22,9 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/";
     }
 
-    if (status === 403) {
-      Storage.clearStorage();
-    }
+    // if (status === 403) {
+    //   Storage.clearStorage();
+    // }
 
     if (status === 500) {
       alert("서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
