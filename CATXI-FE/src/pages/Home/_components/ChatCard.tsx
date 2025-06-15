@@ -1,6 +1,6 @@
 import CommonCard from "../../../components/Common/CommonCard";
 import ChatJoinButton from "./ChatJoinButton";
-import type { ChatRoomItem } from "../../../types/chatData";
+import type { ChatRoomItem } from "../../../types/chat/chatData";
 import { stationDisplayMap } from "../../../constants/stationMap";
 import { getDepartText } from "../../../utils/date";
 import { useModal } from "../../../contexts/ModalContext";

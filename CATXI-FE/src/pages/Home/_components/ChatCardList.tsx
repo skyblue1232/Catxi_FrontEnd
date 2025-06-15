@@ -1,6 +1,6 @@
 import { useChatRooms } from "../../../hooks/query/useChatRooms";
 import ChatCard from "./ChatCard";
-import type { ChatRoomItem } from "../../../types/chatData";
+import type { ChatRoomItem } from "../../../types/chat/chatData";
 import LogoText from "../../../assets/icons/logoText.svg?react";
 import NoContent from "../../../assets/icons/noContent.svg?react";
 import { useEffect } from "react";

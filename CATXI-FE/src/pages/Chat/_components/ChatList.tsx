@@ -1,13 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import ChatItem from "./ChatItem";
-import type { ChatMessage } from "../../../types/chat";
+import JoinMessage from "./JoinMessage";
+import { useOutletContext } from "react-router-dom";
+import type { ChatMessage } from "../../../types/chat/chat";
+
+interface ChatContext {
+  nicknameMap: Record<string, string>;
+}
 
 interface Props {
-  messages: ChatMessage[];
+  messages: ChatMessage[]; 
 }
- 
+
 const ChatList = ({ messages }: Props) => {
   const listRef = useRef<HTMLDivElement>(null);
+  const { nicknameMap } = useOutletContext<ChatContext>();
 
   useEffect(() => {
     if (listRef.current) {
@@ -18,20 +25,44 @@ const ChatList = ({ messages }: Props) => {
     }
   }, [messages]);
 
-  return (
-    <div
-      ref={listRef}
-      className="flex-1 overflow-y-auto space-y-4 mb-17 pb-4 custom-scrollbar"
-    >
-      {messages.map((msg, idx) => (
+  const renderedMessages = useMemo(() => {
+    const seenEmails = new Set<string>();
+
+    return messages.flatMap((msg, idx) => {
+      const isSystemJoinMessage =
+        msg.message.includes("참여") && msg.email && !msg.isMine;
+
+      const nickname = nicknameMap[msg.email] || msg.email;
+
+      const elements = [];
+
+      if (isSystemJoinMessage && !seenEmails.has(msg.email)) {
+        seenEmails.add(msg.email);
+        elements.push(
+          <JoinMessage key={`join-${msg.email}-${idx}`} name={nickname} />
+        );
+      }
+
+      elements.push(
         <ChatItem
-          key={idx}
+          key={`chat-${idx}`}
           message={msg.message}
-          isMe={msg.isMine ?? false} 
+          isMe={msg.isMine ?? false}
           email={msg.email}
           sentAt={msg.sentAt}
         />
-      ))}
+      );
+
+      return elements;
+    });
+  }, [messages, nicknameMap]);
+
+  return (
+    <div
+      ref={listRef}
+      className="flex-1 overflow-y-auto space-y-4 mb-22 pb-[1.25rem] custom-scrollbar"
+    >
+      {renderedMessages}
     </div>
   );
 };

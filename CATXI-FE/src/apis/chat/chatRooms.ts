@@ -1,4 +1,4 @@
-import type { ChatRoomItem, ChatRoomResponse } from '../../types/chatData';
+import type { ChatRoomItem, ChatRoomResponse } from '../../types/chat/chatData';
 import axiosInstance from '../axios';
 
 interface GetChatRoomsParams {

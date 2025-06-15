@@ -1,4 +1,4 @@
-import type { ChatRoomStatus } from "../../../types/chatData";
+import type { ChatRoomStatus } from "../../../types/chat/chatData";
 
 interface Props {
   status?: ChatRoomStatus;
