@@ -37,7 +37,7 @@ const DefaultBox = ({ chatRoom, isHost, isRequested, onRequestReady }: Props) =>
         </div>
       </div>
 
-      {isHost && (
+      {!isHost && (
         <button
           disabled={isRequested}
           onClick={onRequestReady}
