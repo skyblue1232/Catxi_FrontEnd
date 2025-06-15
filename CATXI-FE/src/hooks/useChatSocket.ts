@@ -3,38 +3,33 @@ import SockJS from 'sockjs-client';
 import * as webstomp from 'webstomp-client';
 import type { Client } from 'webstomp-client';
 import { useChatMessages } from './query/useChatMessages';
-import type { ChatMessage } from '../types/chat';
-import type { ChatMessageItem } from '../types/chatData';
-
-
+import type { ChatMessage } from '../types/chat/chat';
+import type { ChatMessageItem } from '../types/chat/chatData';
 const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
 export function useChatSocket(
   roomId: number,
   jwtToken: string,
   myEmail: string,
-  onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void
-
+  onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void,
+  nicknameMap?: Record<string, string> 
 ) {
   const stompClientRef = useRef<Client | null>(null);
   const subscriptionRef = useRef<webstomp.Subscription | null>(null);
-
   const { data: chatHistory } = useChatMessages(roomId);
 
   useEffect(() => {
     if (chatHistory?.data) {
       chatHistory.data.forEach((msg: ChatMessageItem) => {
+        const senderEmail = msg.senderEmail;
+        const senderName = nicknameMap?.[senderEmail] || msg.senderName || senderEmail;
         const convertedMsg: ChatMessage = {
-          message: msg.content,
-          email: msg.senderEmail,
-          roomId: Number(msg.roomId),
-          sentAt: msg.sentAt,
-          isMine: msg.senderEmail === myEmail,
+          messageId: msg.messageId, roomId: msg.roomId, sender: msg.senderId,email: senderEmail, senderName, message: msg.content, sentAt: msg.sentAt, isMine: senderEmail === myEmail,
         };
         onMessage(convertedMsg, { isHistory: true });
       });
     }
-  }, [chatHistory, onMessage, myEmail]);
+  }, [chatHistory, onMessage, myEmail, nicknameMap]);
 
   const connect = useCallback(() => {
     if (stompClientRef.current) {
@@ -54,14 +49,11 @@ export function useChatSocket(
         subscriptionRef.current = stompClient.subscribe(
           `/topic/${roomId}`,
           (message) => {
-            const parsed = JSON.parse(message.body) as any;
-
-            const msg: ChatMessage = {
-              message: parsed.message!,
-              email: parsed.senderEmail ?? parsed.email, 
-              roomId: parsed.roomId!,
-              sentAt: parsed.sentAt,
-              isMine: parsed.email === myEmail, 
+            const parsed = JSON.parse(message.body);
+            const email = parsed.senderEmail ?? parsed.email;
+            const senderName = nicknameMap?.[email] || parsed.senderName || email;
+            const msg: ChatMessage = { 
+              message: parsed.message, email, senderName, roomId: parsed.roomId, sentAt: parsed.sentAt,isMine: email === myEmail, 
             };
 
             onMessage(msg);
@@ -75,7 +67,7 @@ export function useChatSocket(
     );
 
     stompClientRef.current = stompClient;
-  }, [roomId, jwtToken, myEmail, onMessage]);
+  }, [roomId, jwtToken, myEmail, onMessage, nicknameMap]);
 
   const disconnect = useCallback(() => {
     subscriptionRef.current?.unsubscribe();
@@ -88,14 +80,7 @@ export function useChatSocket(
     (message: string) => {
       const utcNow = new Date();
       const sentAtKST = new Date(utcNow.getTime() + 9 * 60 * 60 * 1000).toISOString();
-      const outgoingMsg = {
-        message,
-        email: myEmail,
-        roomId,
-        sentAt: sentAtKST,
-      };
-
-      console.log(sentAtKST);
+      const outgoingMsg = { message, email: myEmail, roomId, sentAt: sentAtKST };
 
       if (stompClientRef.current?.connected) {
         stompClientRef.current.send(
@@ -104,10 +89,10 @@ export function useChatSocket(
           { Authorization: `Bearer ${jwtToken}` }
         );
       } else {
-        console.warn("WebSocket 연결이 진행 중");
+        console.warn("WebSocket 연결이 아직 완료되지 않음");
       }
     },
-    [roomId, myEmail, jwtToken, onMessage]
+    [roomId, myEmail, jwtToken]
   );
 
   useEffect(() => {

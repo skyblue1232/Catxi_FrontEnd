@@ -1,13 +1,43 @@
 import { Outlet, useParams } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
-import { useChatConnection } from '../hooks/useChatConnection.ts';
+import { useChatConnection } from '../hooks/useChatConnection';
+import { useChatRoomDetail } from '../hooks/query/useChatDetail';
+import LogoText from '../assets/icons/logoText.svg?react';
 
 const ChatLayout = () => {
   const { roomId } = useParams();
+  const parsedRoomId = Number(roomId);
   const [input, setInput] = useState('');
-  const parsedRoomId = Number(roomId); 
-  const { messages, myEmail, sendMessage } = useChatConnection(parsedRoomId);
+
+  const {
+    messages,
+    myEmail,
+    sendMessage,
+  } = useChatConnection(parsedRoomId);
+
+  const {
+    data: chatRoomDetail,
+    isLoading,
+    isError,
+  } = useChatRoomDetail(parsedRoomId);
+
+  const nicknameMap = useMemo(() => {
+    const emails = chatRoomDetail?.data?.participantEmails || [];
+    const nicknames = chatRoomDetail?.data?.participantNicknames || [];
+    return emails.reduce((acc, email, i) => {
+      acc[email] = nicknames[i];
+      return acc;
+    }, {} as Record<string, string>);
+  }, [chatRoomDetail]);
+
+  const hostEmail = chatRoomDetail?.data?.hostEmail ?? '';
+
+  const hostNickname = useMemo(() => {
+    if (!chatRoomDetail?.data) return '';
+    const idx = chatRoomDetail.data.participantEmails.findIndex((e) => e === hostEmail);
+    return chatRoomDetail.data.participantNicknames[idx] || hostEmail;
+  }, [chatRoomDetail, hostEmail]);
 
   const handleSubmit = () => {
     if (!input.trim()) return;
@@ -15,10 +45,41 @@ const ChatLayout = () => {
     setInput('');
   };
 
-  const contextValue = useMemo(() => ({ messages, myEmail }), [messages, myEmail]);
+  const contextValue = useMemo(
+    () => ({
+      messages,
+      myEmail,
+      hostEmail,
+      hostNickname,
+      chatRoom: chatRoomDetail?.data,
+      nicknameMap,
+    }),
+    [messages, myEmail, hostEmail, hostNickname, chatRoomDetail, nicknameMap]
+  );
 
-  if (!roomId) {
-    return <div>Loading... 채팅방 아이디가 없습니다.</div>;
+  if (!roomId || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-4 border-[#8C46F6] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600">로딩 중입니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !chatRoomDetail?.data) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <LogoText className="w-[140px] h-auto" />
+          <button
+            onClick={() => window.location.reload()}
+            className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
+          >retry</button>
+        </div>
+      </div>
+    );
   }
 
   return (
