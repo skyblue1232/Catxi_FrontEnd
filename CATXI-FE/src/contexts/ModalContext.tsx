@@ -40,7 +40,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           onClick={closeModal}
         >
           <div
-            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
+            className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md"
             onClick={(e) => e.stopPropagation()} 
           >
             {content}
