@@ -13,7 +13,7 @@ interface ChatContext {
 }
 
 const TopStatusBar = () => {
-  const { hostEmail, myEmail, chatRoom, hostNickname } = useOutletContext<ChatContext>();
+  const { myEmail, chatRoom } = useOutletContext<ChatContext>();
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { mutate: leaveRoom } = useLeaveChatRoom();
@@ -25,7 +25,7 @@ const TopStatusBar = () => {
   const statusColorMap = { WAITING: '#7424F5', READY_LOCKED: '#1AD494', MATCHED: '#A0AEC0', EXPIRED: '#D1D5DB' };
   const statusText = chatRoom?.roomStatus ? statusTextMap[chatRoom.roomStatus] : '';
   const statusColor = chatRoom?.roomStatus ? statusColorMap[chatRoom.roomStatus] : '#D1D5DB';
-  const isHost = hostNickname === (myEmail || hostEmail);
+  const isHost = myEmail === chatRoom?.hostEmail;
   const handleBackClick = () => { navigate('/home') };
 
   const handleLeave = () => {
