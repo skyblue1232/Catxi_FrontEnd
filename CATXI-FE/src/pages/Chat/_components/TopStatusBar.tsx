@@ -1,6 +1,9 @@
 import { ChevronLeft } from 'lucide-react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useParams, useNavigate } from 'react-router-dom';
 import type { ChatRoomDetail } from '../../../types/chat/chatRoomDetail';
+import { useLeaveChatRoom } from '../../../hooks/mutation/chat/useChatDelete';
+import { useModal } from '../../../contexts/ModalContext';
+import LeaveRoomModal from '../../../components/Modal/LeaveRoomModal';
 
 interface ChatContext {
   hostEmail: string;
@@ -11,15 +14,20 @@ interface ChatContext {
 
 const TopStatusBar = () => {
   const { hostEmail, myEmail, chatRoom, hostNickname } = useOutletContext<ChatContext>();
+  const { roomId } = useParams();
+  const navigate = useNavigate();
+  const { mutate: leaveRoom } = useLeaveChatRoom();
+  const { openModal, closeModal } = useModal();
   const current = (chatRoom?.currentSize ?? 0) + 1;
   const total = (chatRoom?.recruitSize ?? 0) + 1;
-  const handleBackClick = () => { window.history.back() };
+
   const statusTextMap = {
     WAITING: '모집중',
     READY_LOCKED: '준비 완료',
     MATCHED: '매칭 완료',
     EXPIRED: '만료됨',
   };
+
   const statusColorMap = {
     WAITING: '#7424F5',
     READY_LOCKED: '#1AD494',
@@ -31,6 +39,32 @@ const TopStatusBar = () => {
   const statusColor = chatRoom?.roomStatus ? statusColorMap[chatRoom.roomStatus] : '#D1D5DB';
   const isHost = hostNickname === (myEmail || hostEmail);
 
+  const handleBackClick = () => {
+    navigate('/home');
+  };
+
+  const handleLeave = () => {
+    if (!roomId) return;
+
+    openModal(
+      <LeaveRoomModal
+        onConfirm={() => {
+          leaveRoom(Number(roomId), {
+            onSuccess: () => {
+              closeModal();
+              navigate('/home');
+            },
+            onError: () => {
+              closeModal();
+              alert('채팅방 나가기에 실패했습니다.');
+            },
+          });
+        }}
+        onCancel={closeModal}
+      />
+    );
+  };
+  
   return (
     <div className="w-full flex justify-between items-center py-6 px-[1.688rem]">
       <button onClick={handleBackClick}>
@@ -42,10 +76,11 @@ const TopStatusBar = () => {
           {statusText} ({current}/{total})
         </span>
       </div>
+
       {isHost ? (
         <button className="text-sm text-gray-500">삭제하기</button>
       ) : (
-        <div className="text-sm text-gray-500 invisible">삭제하기</div>
+        <button className="text-sm text-gray-500" onClick={handleLeave}>나가기</button>
       )}
     </div>
   );
