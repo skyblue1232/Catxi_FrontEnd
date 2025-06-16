@@ -3,7 +3,7 @@ import ChatCard from "./ChatCard";
 import type { ChatRoomItem } from "../../../types/chat/chatData";
 import LogoText from "../../../assets/icons/logoText.svg?react";
 import NoContent from "../../../assets/icons/noContent.svg?react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface ChatCardListProps {
   direction: string;
@@ -25,21 +25,22 @@ const ChatCardList = ({
     page,
   });
 
-  useEffect(() => {
-    if (!data?.data?.content) return;
-
-    const futureRooms = data.data.content.filter((room: ChatRoomItem) => {
-      const now = Date.now();
-      return new Date(room.departAt).getTime() > now;
+  const futureRooms = useMemo(() => {
+    const now = Date.now();
+    return (data?.data?.content || []).filter((room: ChatRoomItem) => {
+      const departTime = new Date(room.departAt).getTime();
+      return departTime > now;
     });
+  }, [data]);
 
+  useEffect(() => {
     if (futureRooms.length > 0) {
       const ids = futureRooms.map((r) => r.roomId);
       localStorage.setItem("homeChatRoomIds", JSON.stringify(ids));
     } else {
       localStorage.removeItem("homeChatRoomIds");
     }
-  }, [data]);
+  }, [futureRooms]);
 
   if (isLoading) {
     return (
@@ -69,12 +70,12 @@ const ChatCardList = ({
   }
 
   const chatRooms = (data?.data?.content || []).filter((room: ChatRoomItem) => {
-    const now = new Date().getTime();
-    const depart = new Date(room.departAt).getTime();
-    return depart > now; 
+    const departTime = new Date(room.departAt).getTime(); 
+    const now = Date.now();
+    return departTime > now;
   });
 
-  if (!chatRooms.length) {
+  if (!futureRooms.length) {
     return (
       <div className="flex justify-center items-center p-4 h-[60vh]">
         <div className="flex flex-col justify-center items-center gap-2 text-[#9E9E9E]">

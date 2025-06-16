@@ -1,42 +1,34 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import SockJS from 'sockjs-client';
 import * as webstomp from 'webstomp-client';
-import type { Client } from 'webstomp-client';
-import { useChatMessages } from './query/useChatMessages';
+import type { Client, Subscription } from 'webstomp-client';
 import type { ChatMessage } from '../types/chat/chat';
-import type { ChatMessageItem } from '../types/chat/chatData';
+import type { ReadyMessage } from '../types/chat/readyMessage';
+import { parseChatMessage, parseReadyMessage } from '../utils/chat/parseSocketMessages';
+
 const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
 export function useChatSocket(
   roomId: number,
   jwtToken: string,
   myEmail: string,
-  onMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void,
-  nicknameMap?: Record<string, string> 
+  onChatMessage: (msg: ChatMessage, options?: { isHistory?: boolean }) => void,
+  onReadyMessage?: (msg: ReadyMessage) => void,
+  nicknameMap: Record<string, string> = {}
 ) {
   const stompClientRef = useRef<Client | null>(null);
-  const subscriptionRef = useRef<webstomp.Subscription | null>(null);
-  const { data: chatHistory } = useChatMessages(roomId);
-
-  useEffect(() => {
-    if (chatHistory?.data) {
-      chatHistory.data.forEach((msg: ChatMessageItem) => {
-        const senderEmail = msg.senderEmail;
-        const senderName = nicknameMap?.[senderEmail] || msg.senderName || senderEmail;
-        const convertedMsg: ChatMessage = {
-          messageId: msg.messageId, roomId: msg.roomId, sender: msg.senderId,email: senderEmail, senderName, message: msg.content, sentAt: msg.sentAt, isMine: senderEmail === myEmail,
-        };
-        onMessage(convertedMsg, { isHistory: true });
-      });
-    }
-  }, [chatHistory, onMessage, myEmail, nicknameMap]);
+  const chatSubRef = useRef<Subscription | null>(null);
+  const readySubRef = useRef<Subscription | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const isConnectingRef = useRef(false);
 
   const connect = useCallback(() => {
-    if (stompClientRef.current) {
-      console.log('이미 연결됨');
+    if (isConnectingRef.current || stompClientRef.current?.connected) {
+      console.log('[WebSocket] 이미 연결 중이거나 연결됨');
       return;
     }
 
+    isConnectingRef.current = true;
     const socket = new SockJS(`${SERVER_URL}/connect`);
     const stompClient = webstomp.over(socket);
     stompClient.debug = () => {};
@@ -44,64 +36,84 @@ export function useChatSocket(
     stompClient.connect(
       { Authorization: `Bearer ${jwtToken}` },
       () => {
-        console.log('STOMP 연결 성공');
+        console.log('[WebSocket] 연결 성공');
+        stompClientRef.current = stompClient;
+        setIsConnected(true);
+        isConnectingRef.current = false;
 
-        subscriptionRef.current = stompClient.subscribe(
+        chatSubRef.current?.unsubscribe();
+        readySubRef.current?.unsubscribe();
+
+        chatSubRef.current = stompClient.subscribe(
           `/topic/${roomId}`,
-          (message) => {
-            const parsed = JSON.parse(message.body);
-            const email = parsed.senderEmail ?? parsed.email;
-            const senderName = nicknameMap?.[email] || parsed.senderName || email;
-            const msg: ChatMessage = { 
-              message: parsed.message, email, senderName, roomId: parsed.roomId, sentAt: parsed.sentAt,isMine: email === myEmail, 
-            };
+          (msg) => {
+            const parsed = parseChatMessage(JSON.parse(msg.body), myEmail, nicknameMap);
+            onChatMessage(parsed);
+          },
+          { Authorization: `Bearer ${jwtToken}` }
+        );
 
-            onMessage(msg);
+        readySubRef.current = stompClient.subscribe(
+          `/topic/ready/${roomId}`,
+          (msg) => {
+            if (!onReadyMessage) return;
+            const parsed = parseReadyMessage(JSON.parse(msg.body));
+            onReadyMessage(parsed);
           },
           { Authorization: `Bearer ${jwtToken}` }
         );
       },
-      (error) => {
-        console.error('STOMP 연결 실패:', error);
+      (err) => {
+        console.error('[WebSocket] 연결 실패:', err);
+        isConnectingRef.current = false;
+        setIsConnected(false);
       }
     );
+  }, [roomId, jwtToken, myEmail, onChatMessage, onReadyMessage, nicknameMap]);
 
-    stompClientRef.current = stompClient;
-  }, [roomId, jwtToken, myEmail, onMessage, nicknameMap]);
 
   const disconnect = useCallback(() => {
-    subscriptionRef.current?.unsubscribe();
-    stompClientRef.current?.disconnect();
+    chatSubRef.current?.unsubscribe();
+    readySubRef.current?.unsubscribe();
+    chatSubRef.current = null;
+    readySubRef.current = null;
+
+    stompClientRef.current?.disconnect(() => {
+      console.log('[WebSocket] 연결 해제됨');
+      setIsConnected(false);
+    });
+
     stompClientRef.current = null;
-    console.log('STOMP 연결 해제');
   }, []);
 
   const sendMessage = useCallback(
     (message: string) => {
-      const utcNow = new Date();
-      const sentAtKST = new Date(utcNow.getTime() + 9 * 60 * 60 * 1000).toISOString();
-      const outgoingMsg = { message, email: myEmail, roomId, sentAt: sentAtKST };
-
-      if (stompClientRef.current?.connected) {
-        stompClientRef.current.send(
-          `/publish/${roomId}`,
-          JSON.stringify(outgoingMsg),
-          { Authorization: `Bearer ${jwtToken}` }
-        );
-      } else {
-        console.warn("WebSocket 연결이 아직 완료되지 않음");
+      if (!isConnected || !stompClientRef.current?.connected) {
+        console.warn('[WebSocket] 연결 전이므로 메시지를 보낼 수 없음');
+        return;
       }
+
+      const sentAtKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();
+
+      const payload = {
+        message,
+        email: myEmail,
+        roomId,
+        sentAt: sentAtKST,
+      };
+
+      stompClientRef.current.send(
+        `/publish/${roomId}`,
+        JSON.stringify(payload),
+        { Authorization: `Bearer ${jwtToken}` }
+      );
     },
-    [roomId, myEmail, jwtToken]
+    [isConnected, roomId, myEmail, jwtToken]
   );
 
   useEffect(() => {
-    if (!roomId || !myEmail) return;
-    connect();
-    return () => {
-      disconnect();
-    };
-  }, [roomId, myEmail, connect, disconnect]);
+    return () => disconnect();
+  }, [disconnect]);
 
-  return { connect, disconnect, sendMessage };
-};
+  return { connect, disconnect, sendMessage, isConnected };
+}

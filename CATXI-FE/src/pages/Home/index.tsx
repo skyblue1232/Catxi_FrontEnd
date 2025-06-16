@@ -25,10 +25,12 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full">
-      <CategoryTab direction={direction} setDirection={setDirection} />
+    <div className="w-full h-screen flex flex-col">
+      <div className="sticky top-0 z-50 bg-white">
+        <CategoryTab direction={direction} setDirection={setDirection} />
+      </div>
 
-      <div className="bg-[#FAFAFA] min-h-screen">
+      <div className="sticky top-[52px] z-40 bg-[#FAFAFA]">
         <LocationFilter
           station={selectedLocations[direction]}
           sort={sort}
@@ -36,14 +38,18 @@ const HomePage = () => {
           onSelectSort={setSort}
         />
 
-        <ChatCardList
-          direction={direction}
-          station={selectedLocations[direction] || ''}
-          sort={sort}
-          page={page}
-        />
+        <div className="flex-1 overflow-y-scroll mb-[6rem]"> 
+          <ChatCardList
+            direction={direction}
+            station={selectedLocations[direction] || ''}
+            sort={sort}
+            page={page}
+          />
+        </div>
 
-        <FloatingButton />
+        <div className="absolute bottom-6 right-6">
+          <FloatingButton />
+        </div>
       </div>
     </div>
   );

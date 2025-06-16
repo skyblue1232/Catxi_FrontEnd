@@ -13,11 +13,9 @@ interface ChatContext {
 
 const DepartureInfoBox = () => {
   const { roomId } = useParams();
-  const { hostEmail, myEmail, chatRoom } = useOutletContext<ChatContext>();
+  const { myEmail, chatRoom } = useOutletContext<ChatContext>();
   const [isRequested, setIsRequested] = useState(false);
   const { mutate } = useReadyRequest();
-
-  const isHost = hostEmail === myEmail;
 
   const handleRequestReady = () => {
     if (!roomId) return;
@@ -34,7 +32,7 @@ const DepartureInfoBox = () => {
   return (
     <DefaultBox
       chatRoom={chatRoom}
-      isHost={isHost}
+      myEmail={myEmail} 
       isRequested={isRequested}
       onRequestReady={handleRequestReady}
     />
