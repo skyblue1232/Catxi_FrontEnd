@@ -1,13 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useModal } from '../../contexts/ModalContext';
 import LeaveRoomModal from '../../components/Modal/LeaveRoomModal';
+import { useLeaveChatRoom } from '../mutation/chat/useChatDelete';
 
 export const useNavigationBlocker = (): void => {
   const navigate = useNavigate();
   const location = useLocation();
   const { openModal, closeModal } = useModal();
+  const { roomId } = useParams();
   const prevPathRef = useRef(location.pathname);
+  const { mutate: leaveRoom } = useLeaveChatRoom();
 
   useEffect(() => {
     const handlePopState = () => {
@@ -16,9 +19,18 @@ export const useNavigationBlocker = (): void => {
       openModal(
         <LeaveRoomModal
           onConfirm={() => {
-            closeModal();
-            window.removeEventListener('popstate', handlePopState);
-            navigate('/home');
+            if (!roomId) return;
+
+            leaveRoom(Number(roomId), {
+              onSuccess: () => {
+                closeModal();
+                window.removeEventListener('popstate', handlePopState);
+                navigate('/home');
+              },
+              onError: () => {
+                closeModal();
+              },
+            });
           }}
           onCancel={() => {
             closeModal();
@@ -33,7 +45,7 @@ export const useNavigationBlocker = (): void => {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [navigate, openModal, closeModal]);
+  }, [navigate, openModal, closeModal, leaveRoom, roomId]);
 
   useEffect(() => {
     const nextPath = location.pathname;
@@ -43,8 +55,17 @@ export const useNavigationBlocker = (): void => {
       openModal(
         <LeaveRoomModal
           onConfirm={() => {
-            closeModal();
-            navigate('/home');
+            if (!roomId) return;
+
+            leaveRoom(Number(roomId), {
+              onSuccess: () => {
+                closeModal();
+                navigate('/home');
+              },
+              onError: () => {
+                closeModal();
+              },
+            });
           }}
           onCancel={() => {
             closeModal();
@@ -53,5 +74,5 @@ export const useNavigationBlocker = (): void => {
         />
       );
     }
-  }, [location.pathname, closeModal, navigate, openModal]);
+  }, [location.pathname, closeModal, navigate, openModal, leaveRoom, roomId]);
 };
