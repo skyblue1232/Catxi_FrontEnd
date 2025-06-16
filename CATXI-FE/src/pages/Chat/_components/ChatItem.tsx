@@ -27,7 +27,7 @@ const maskName = (identifier: string | null | undefined) => {
 
 const formatTimestamp = (sentAt: string) => {
   const utc = new Date(sentAt);
-  const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+  const kst = new Date(utc.getTime());
   return kst.toLocaleTimeString("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
