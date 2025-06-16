@@ -27,7 +27,7 @@ const JoinChatModalContent = ({ roomId }: Props) => {
 
         openModal(
           <InfoModal
-            message={ isAlreadyJoined ? "재로그인 해주세요." : "이미 참여 중인 채팅방이 있습니다."
+            message={ isAlreadyJoined ? "재로그인 해주세요." : "이미 채팅방에 참여 중입니다."
             }
             onClose={() => {
               closeModal();
