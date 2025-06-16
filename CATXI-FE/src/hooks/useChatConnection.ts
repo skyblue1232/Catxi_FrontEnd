@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { jwtDecode } from 'jwt-decode';
 import Storage from '../utils/storage';
 import { useChatSocket } from "./useChatSocket";
-import type { ChatMessage } from "../types/chat/chat";
 import { useChatMessages } from "./query/useChatMessages";
+import { useChatRoomDetail } from "./query/useChatDetail";
+import type { ChatMessage } from "../types/chat/chat";
+import type { ReadyMessage } from "../types/chat/readyMessage";
 
 interface JwtPayload {
   email: string;
@@ -14,7 +16,28 @@ export function useChatConnection(roomId: number) {
   const jwtToken = Storage.getAccessToken();
   const [email, setEmail] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [readyMessages, setReadyMessages] = useState<ReadyMessage[]>([]);
+
+  const { data: chatRoomDetail, isLoading, isError } = useChatRoomDetail(roomId);
   const { data: chatHistory } = useChatMessages(roomId);
+
+  // 닉네임 맵
+  const nicknameMap = useMemo(() => {
+    const emails = chatRoomDetail?.data?.participantEmails || [];
+    const nicknames = chatRoomDetail?.data?.participantNicknames || [];
+    return emails.reduce((acc, email, i) => {
+      acc[email] = nicknames[i];
+      return acc;
+    }, {} as Record<string, string>);
+  }, [chatRoomDetail]);
+
+  const hostEmail = chatRoomDetail?.data?.hostEmail ?? '';
+  const hostNickname = useMemo(() => {
+    const idx = chatRoomDetail?.data?.participantEmails.findIndex(e => e === hostEmail);
+    return idx !== undefined && idx !== -1
+      ? chatRoomDetail?.data?.participantNicknames[idx]
+      : hostEmail;
+  }, [chatRoomDetail, hostEmail]);
 
   useEffect(() => {
     if (jwtToken) {
@@ -60,11 +83,18 @@ export function useChatConnection(roomId: number) {
     []
   );
 
+  const handleReadyMessage = useCallback((msg: ReadyMessage) => {
+    console.log('[useChatConnection Ready 수신]', msg);
+    setReadyMessages((prev) => [...prev, msg]);
+  }, []);
+
   const { connect, disconnect, sendMessage } = useChatSocket(
     roomId,
     jwtToken!,
     email,
-    handleMessage
+    handleMessage,
+    handleReadyMessage,
+    nicknameMap,
   );
 
   useEffect(() => {
@@ -77,5 +107,12 @@ export function useChatConnection(roomId: number) {
     messages,
     myEmail: email,
     sendMessage,
+    readyMessages,
+    nicknameMap,
+    hostEmail,
+    hostNickname,
+    chatRoomDetail: chatRoomDetail?.data,
+    isLoading,
+    isError,
   };
-}
+};
