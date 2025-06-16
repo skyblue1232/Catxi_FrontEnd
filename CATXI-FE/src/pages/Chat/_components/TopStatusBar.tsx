@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import type { ChatRoomDetail } from '../../../types/chat/chatRoomDetail';
@@ -11,23 +10,16 @@ interface ChatContext {
 }
 
 const TopStatusBar = () => {
-  const navigate = useNavigate();
   const { hostEmail, myEmail, chatRoom, hostNickname } = useOutletContext<ChatContext>();
-
-  const handleBackClick = () => {
-    navigate('/home');
-  };
-
   const current = (chatRoom?.currentSize ?? 0) + 1;
   const total = (chatRoom?.recruitSize ?? 0) + 1;
-
+  const handleBackClick = () => { window.history.back() };
   const statusTextMap = {
     WAITING: '모집중',
     READY_LOCKED: '준비 완료',
     MATCHED: '매칭 완료',
     EXPIRED: '만료됨',
   };
-
   const statusColorMap = {
     WAITING: '#7424F5',
     READY_LOCKED: '#1AD494',
@@ -37,7 +29,6 @@ const TopStatusBar = () => {
 
   const statusText = chatRoom?.roomStatus ? statusTextMap[chatRoom.roomStatus] : '';
   const statusColor = chatRoom?.roomStatus ? statusColorMap[chatRoom.roomStatus] : '#D1D5DB';
-
   const isHost = hostNickname === (myEmail || hostEmail);
 
   return (
