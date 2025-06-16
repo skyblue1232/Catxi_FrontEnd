@@ -78,9 +78,9 @@ const ChatCard = ({ data }: Props) => {
             <div className="self-center justify-center w-[1px] h-[1.5rem] bg-[#E0E0E0]" />
 
             <div className="flex flex-col ml-[1.25rem]">
-              <span>모집인원</span>
+              <span>전체인원</span>
               <span className="flex justify-center font-medium">
-                <span className="font-medium text-[13px] mb-1">{data.currentSize}</span>/{data.recruitSize}
+                <span className="font-medium text-[13px] mb-1">{data.currentSize+1}</span>/{data.recruitSize+1}
               </span>
             </div>
           </div>

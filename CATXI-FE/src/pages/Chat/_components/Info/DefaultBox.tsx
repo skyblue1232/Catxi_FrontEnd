@@ -15,10 +15,8 @@ const DefaultBox = ({ chatRoom, isHost, isRequested, onRequestReady }: Props) =>
     const departDate = new Date(chatRoom.departAt);
     const now = new Date();
     const isTomorrow = departDate.getDate() !== now.getDate();
-
     const hour = departDate.getHours().toString().padStart(2, '0');
     const minute = departDate.getMinutes().toString().padStart(2, '0');
-
     return `${isTomorrow ? '내일' : '오늘'} ${hour}시 ${minute}분에 출발해요`;
   }, [chatRoom]);
 
