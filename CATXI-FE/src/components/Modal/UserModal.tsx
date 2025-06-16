@@ -6,33 +6,35 @@ interface ChatMemberModalProps {
   nickname: string;
   isHost: boolean;
   isMyself: boolean;
-  onReport: (target: string, reason: string) => void;
-  onKick?: (nickname: string) => void;
+  onReport: (reason: string) => void;
+  onKick?: () => void;
+  roomId: number;
+  targetUserId: string;
 }
 
 const ChatMemberModal = ({
   name,
   nickname,
-  isHost,
+  isMyself,
   onReport,
   onKick,
 }: ChatMemberModalProps) => {
   const { openModal } = useModal();
 
-  if (isHost) return null;
+  if (isMyself) return null;
 
   const handleReportClick = () => {
     openModal(
       <ReportReasonModal
         nickname={nickname}
-        onReport={onReport}
+        onReport={(_, reason) => onReport(reason)}
       />
     );
   };
 
   return (
     <div className="flex flex-col items-center w-full">
-      <h2 className="text-lg font-bold text-center mb-[0.938rem]">{name}</h2>
+      <h2 className="text-lg font-bold text-center mb-[0.938rem]">{`${name} (${nickname})`}</h2>
       <div className="flex flex-col w-full gap-[1.25rem]">
         <button
           onClick={handleReportClick}
@@ -46,8 +48,8 @@ const ChatMemberModal = ({
         </button>
         {onKick && (
           <button
-            onClick={() => onKick(nickname)}
-            className="bg-[#424242] text-[FEFEFE] text-sm py-[0.625rem] rounded-lg mt-[0.625rem]"
+            onClick={onKick}
+            className="bg-[#424242] text-[#FEFEFE] text-sm py-[0.625rem] rounded-lg mt-[0.625rem]"
           >
             강퇴하기
           </button>

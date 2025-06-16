@@ -13,8 +13,6 @@ interface Props {
 const ChatCard = ({ data }: Props) => {
   const { openModal } = useModal();
 
-  console.log(data.departAt);
-
   const handleJoinClick = () => {
     openModal(
       <JoinChatModalContent roomId={data.roomId} />
