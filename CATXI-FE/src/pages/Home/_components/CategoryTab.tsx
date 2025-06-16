@@ -10,7 +10,7 @@ const tabs = [
 
 const CategoryTab = ({ direction, setDirection }: Props) => {
   return (
-    <div className="flex w-full justify-center border-b-[1px] border-[#E0E0E0] mt-[1.25rem]">
+    <div className="flex w-full justify-center border-b-[1px] border-[#E0E0E0] mt-[1.75rem]">
       {tabs.map((tab) => (
         <div key={tab.value} className="relative">
           <button
