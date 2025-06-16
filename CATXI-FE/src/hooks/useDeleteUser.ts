@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { DeleteUser } from "../../../apis/deleteUser";
+import { DeleteUser } from "../apis/deleteUser";
 import { useNavigate } from "react-router-dom";
 export const useDeleteUser = () => {
   const navigate = useNavigate();
