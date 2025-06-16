@@ -1,6 +1,6 @@
 import RecordCard from "./_components/RecordCard";
 import { useGetHistory, useGetMyPage } from "../../hooks/query/useMyPage";
-import { useDeleteUser } from "../../hooks/mutation/sse/useDeleteUser";
+import { useDeleteUser } from "../../hooks/useDeleteUser";
 import { useEffect, useRef } from "react";
 const MyPage = () => {
   const { data } = useGetMyPage();

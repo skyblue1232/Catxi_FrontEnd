@@ -1,11 +1,13 @@
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
 import { useChatConnection } from '../hooks/useChatConnection';
 import { useChatRoomDetail } from '../hooks/query/useChatDetail';
 import LogoText from '../assets/icons/logoText.svg?react';
+import { useNavigationBlocker } from '../hooks/navigation/useNavigationBlocker';
 
 const ChatLayout = () => {
+  const navigate = useNavigate(); 
   const { roomId } = useParams();
   const parsedRoomId = Number(roomId);
   const [input, setInput] = useState('');
@@ -38,6 +40,8 @@ const ChatLayout = () => {
     const idx = chatRoomDetail.data.participantEmails.findIndex((e) => e === hostEmail);
     return chatRoomDetail.data.participantNicknames[idx] || hostEmail;
   }, [chatRoomDetail, hostEmail]);
+
+  useNavigationBlocker();
 
   const handleSubmit = () => {
     if (!input.trim()) return;
@@ -74,7 +78,7 @@ const ChatLayout = () => {
         <div className="flex flex-col items-center gap-4 text-center">
           <LogoText className="w-[140px] h-auto" />
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => navigate('/')}
             className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
           >retry</button>
         </div>

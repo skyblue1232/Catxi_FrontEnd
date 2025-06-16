@@ -7,7 +7,7 @@ import SelectMember from "./_components/SelectMembers";
 import TimePicker from "./_components/TimePicker";
 import AllSet from "./_components/AllSet";
 import { useChatStore } from "../../store/createChatStore";
-import { useCreateChat } from "../../hooks/mutation/sse/useCreateChat";
+import { useCreateChat } from "../../hooks/mutation/useCreateChat";
 import { labelToLocationMap } from "../MyPage/_utils/location";
 import { parseTimeToISOString } from "./_constants/time";
 import { useNavigate } from "react-router-dom";

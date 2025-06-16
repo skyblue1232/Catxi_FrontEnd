@@ -7,11 +7,5 @@ export const useJoinChatRoom = () => {
     onSuccess: (data) => {
       console.log(data);
     },
-    onError: (error) => {
-      console.error(error);
-    },
-    onSettled: () => {
-      console.log("요청을 보냈습니다.");
-    }
   });
 };

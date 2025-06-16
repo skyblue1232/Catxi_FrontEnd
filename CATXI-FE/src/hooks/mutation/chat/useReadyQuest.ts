@@ -4,7 +4,10 @@ import { requestReady, acceptReady, rejectReady } from '../../../apis/chat/chatR
 export const useReadyRequest = () => {
   return useMutation({
     mutationFn: (roomId: number) => requestReady(roomId),
-    onError: (error: any) => {
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
       console.error(error);
     },
   });
@@ -13,7 +16,10 @@ export const useReadyRequest = () => {
 export const useReadyAccept = () => {
   return useMutation({
     mutationFn: (roomId: number) => acceptReady(roomId),
-    onError: (error: any) => {
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
       console.error(error);
     },
   });
@@ -22,7 +28,10 @@ export const useReadyAccept = () => {
 export const useReadyReject = () => {
   return useMutation({
     mutationFn: (roomId: number) => rejectReady(roomId),
-    onError: (error: any) => {
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
       console.error(error);
     },
   });

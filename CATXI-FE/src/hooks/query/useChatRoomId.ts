@@ -6,7 +6,5 @@ export const useMyChatRoomId = () => {
   return useQuery<number, Error>({
     queryKey: ['myChatRoomId'],
     queryFn: fetchMyChatRoomId,
-    staleTime: 1000 * 30, 
-    retry: 1,
   });
 };
