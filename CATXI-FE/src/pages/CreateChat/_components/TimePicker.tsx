@@ -1,15 +1,13 @@
 import { useState } from "react";
 import Info from "../../../assets/icons/info.svg?react";
 import Picker from "react-mobile-picker-scroll";
-
+import { useChatStore } from "../../../store/createChatStore";
 type PickerProp = {
-  day: string | null;
   onCancel: () => void;
-  setTime: (time: string) => void;
-  initialTime: string | null;
 };
 
-const TimePicker = ({ day, onCancel, setTime, initialTime }: PickerProp) => {
+const TimePicker = ({ onCancel }: PickerProp) => {
+  const { answers, updateAnswer } = useChatStore();
   const parseInitialTime = (time: string | null) => {
     if (!time) return { hour: "00", minute: "00" };
 
@@ -17,10 +15,14 @@ const TimePicker = ({ day, onCancel, setTime, initialTime }: PickerProp) => {
     if (!match) return { hour: "00", minute: "00" };
 
     const [, meridiem, h, m] = match;
-    let hour = meridiem === "오후" ? String(Number(h) + 12) : h;
-    if (hour === "24") hour = "00";
+    let hourNum = Number(h);
+    if (meridiem === "오전") {
+      if (hourNum === 12) hourNum = 0;
+    } else {
+      if (hourNum !== 12) hourNum += 12;
+    }
     return {
-      hour: hour.padStart(2, "0"),
+      hour: String(hourNum).padStart(2, "0"),
       minute: m.padStart(2, "0"),
     };
   };
@@ -36,19 +38,22 @@ const TimePicker = ({ day, onCancel, setTime, initialTime }: PickerProp) => {
     minute: minutes,
   };
   const [valueGroups, setValueGroups] = useState(() =>
-    parseInitialTime(initialTime)
+    parseInitialTime(answers.time)
   );
 
   const handleChange = (name: string, value: string) => {
     setValueGroups((prev) => ({ ...prev, [name]: value }));
   };
   const handleApply = () => {
+    const hour = Number(valueGroups.hour);
+    const minute = valueGroups.minute;
     const dayTime = Number(valueGroups.hour) < 12 ? "오전" : "오후";
-    const formattedHour =
-      dayTime === "오전"
-        ? valueGroups.hour
-        : String(Number(valueGroups.hour) - 12).padStart(2, "0");
-    setTime(`${dayTime} ${formattedHour}시 ${valueGroups.minute}분`);
+    const formattedHour = (() => {
+      if (dayTime === "오전") return String(hour).padStart(2, "0");
+      if (hour === 12) return "12";
+      return String(hour - 12).padStart(2, "0");
+    })();
+    updateAnswer("time", `${dayTime} ${formattedHour}시 ${minute}분`);
     onCancel();
   };
   return (
@@ -57,7 +62,7 @@ const TimePicker = ({ day, onCancel, setTime, initialTime }: PickerProp) => {
         <div className=" flex flex-col items-center w-full h-full pt-5 px-2.5 gap-3.75">
           <p className="text-base font-medium">출발 시간 선택</p>
           <p className="text-sm font-medium text-[#9E9E9E]">
-            {day === "today" ? "오늘" : "내일"} 출발
+            {answers.isToday === "today" ? "오늘" : "내일"} 출발
           </p>
           <hr className="w-full border-[#E0E0E0]" />
           <div className="w-full h-31.5 flex justify-center items-center relative">

@@ -7,7 +7,13 @@ interface Props {
   onSelectSort: (sort: 'departAt' | 'createdTime') => void;
 }
 
-const locations = ['SOSA_ST', 'YEOKGOK_ST', 'ETC'];
+const locations = ['YEOKGOK_ST', 'SOSA_ST', 'ETC'];
+const locationDisplayMap: Record<string, string> = {
+  YEOKGOK_ST: '역곡역',
+  SOSA_ST: '소사역',
+  ETC: '그 외',
+};
+
 
 const LocationFilter: React.FC<Props> = ({
   station,
@@ -16,25 +22,24 @@ const LocationFilter: React.FC<Props> = ({
   onSelectSort,
 }) => {
   return (
-    <div className="flex justify-between items-center ml-[1.625rem]">
-      <div className="flex mt-[1.125rem] gap-[0.5rem]">
+    <div className="flex justify-between items-center px-[1.5rem] mt-[1.125rem] ">
+      <div className="flex gap-[0.5rem]">
         {locations.map((loc) => (
           <button
             key={loc}
             className={`px-[0.625rem] py-[0.313rem] border border-[#E0E0E0] rounded-[30px] font-md text-[14px] ${
-              station === loc
+              (station ?? 'SOSA_ST') === loc
                 ? 'bg-[#424242] text-white'
                 : 'bg-[#FAFAFA] text-[#9E9E9E]'
             }`}
             onClick={() => onSelectLocation(loc)}
           >
-            {loc}
+            {locationDisplayMap[loc]}
           </button>
         ))}
       </div>
 
-      {/* 정렬 */}
-      <div className="flex items-center gap-[0.5rem] mr-[1.625rem]">
+      <div className="flex items-center gap-[0.5rem]">
         <span
           className={`text-[14px] cursor-pointer ${
             sort === 'departAt' ? 'text-black font-bold' : 'text-[#9E9E9E]'

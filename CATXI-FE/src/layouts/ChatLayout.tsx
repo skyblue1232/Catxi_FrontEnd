@@ -1,90 +1,90 @@
-import { Outlet, useParams, useLocation } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
-import { useChatSocket } from '../hooks/useChatSocket';
-import { useSseSubscribe } from '../hooks/useSseSubscribe';
-import type { ChatMessage } from '../types/chat';
-import { jwtDecode } from 'jwt-decode';
-import Storage from '../utils/storage';
-
-interface JwtPayload {
-  email: string;
-  [key: string]: any;
-}
+import { useChatConnection } from '../hooks/useChatConnection';
+import { useChatRoomDetail } from '../hooks/query/useChatDetail';
+import LogoText from '../assets/icons/logoText.svg?react';
+import { useNavigationBlocker } from '../hooks/navigation/useNavigationBlocker';
 
 const ChatLayout = () => {
+  const navigate = useNavigate(); 
   const { roomId } = useParams();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const memberId = Number(searchParams.get('memberId') || '0');
-
-  const jwtToken = Storage.getAccessToken(); 
-
-  let email = '';
-  if (jwtToken) {
-    const decoded = jwtDecode<JwtPayload>(jwtToken);
-    email = decoded.email;
-  }
-
+  const parsedRoomId = Number(roomId);
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  const handleMessage = useCallback(
-    (msg: ChatMessage, options?: { isHistory?: boolean }) => {
-      setMessages((prev) => {
-        if (options?.isHistory) {
-          const alreadyExists = prev.some(
-            (m) =>
-              m.timestamp === msg.timestamp &&
-              m.message === msg.message &&
-              m.sender === msg.sender
-          );
-          return alreadyExists ? prev : [...prev, msg];
-        }
-        return [...prev, msg];
-      });
-    },
-    []
-  );
+  const {
+    messages,
+    myEmail,
+    sendMessage,
+  } = useChatConnection(parsedRoomId);
 
-  const { connect, disconnect: disconnectWs, sendMessage } = useChatSocket(
-    roomId!,
-    memberId,
-    jwtToken!,
-    email,
-    handleMessage
-  );
+  const {
+    data: chatRoomDetail,
+    isLoading,
+    isError,
+  } = useChatRoomDetail(parsedRoomId);
 
-  const { connect: connectSse, disconnect } = useSseSubscribe(roomId!, jwtToken!);
+  const nicknameMap = useMemo(() => {
+    const emails = chatRoomDetail?.data?.participantEmails || [];
+    const nicknames = chatRoomDetail?.data?.participantNicknames || [];
+    return emails.reduce((acc, email, i) => {
+      acc[email] = nicknames[i];
+      return acc;
+    }, {} as Record<string, string>);
+  }, [chatRoomDetail]);
 
-  useEffect(() => {
-    if (!roomId) return;
+  const hostEmail = chatRoomDetail?.data?.hostEmail ?? '';
 
-    connect();
-    connectSse();
-    console.log("WebSocket 연결 시도:", roomId);
+  const hostNickname = useMemo(() => {
+    if (!chatRoomDetail?.data) return '';
+    const idx = chatRoomDetail.data.participantEmails.findIndex((e) => e === hostEmail);
+    return chatRoomDetail.data.participantNicknames[idx] || hostEmail;
+  }, [chatRoomDetail, hostEmail]);
 
-    return () => {
-      disconnect();
-      disconnectWs();
-      console.log("SSE, Websocket 연결 해제:", roomId);
-    };
-  }, [roomId, connect, connectSse, disconnect, disconnectWs]);
-
-  const contextValue = useMemo(
-    () => ({ messages, memberId }),
-    [messages, memberId]
-  );
-
-  if (!roomId) {
-    return <div>Loading... 채팅방 아이디가 없습니다.</div>;
-  }
+  useNavigationBlocker();
 
   const handleSubmit = () => {
     if (!input.trim()) return;
     sendMessage(input);
     setInput('');
   };
+
+  const contextValue = useMemo(
+    () => ({
+      messages,
+      myEmail,
+      hostEmail,
+      hostNickname,
+      chatRoom: chatRoomDetail?.data,
+      nicknameMap,
+    }),
+    [messages, myEmail, hostEmail, hostNickname, chatRoomDetail, nicknameMap]
+  );
+
+  if (!roomId || isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[90vh]">
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-8 h-8 border-4 border-[#8C46F6] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-600">로딩 중입니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !chatRoomDetail?.data) {
+    return (
+      <div className="flex justify-center items-center h-[90vh]">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <LogoText className="w-[140px] h-auto" />
+          <button
+            onClick={() => navigate('/')}
+            className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
+          >retry</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col relative w-full min-h-screen bg-background overflow-hidden">

@@ -1,43 +1,60 @@
 import { useModal } from "../../contexts/ModalContext";
-import CommonCard from "../Common/CommonCard";
+import ReportReasonModal from '../Modal/ReportModal';
 
-const CommonModal = () => {
-  const { isOpen, title, description, buttons, closeModal } = useModal();
+interface ChatMemberModalProps {
+  name: string;
+  nickname: string;
+  isHost: boolean;
+  isMyself: boolean;
+  onReport: (target: string, reason: string) => void;
+  onKick?: (nickname: string) => void;
+}
 
-  if (!isOpen) return null;
+const ChatMemberModal = ({
+  name,
+  nickname,
+  isHost,
+  onReport,
+  onKick,
+}: ChatMemberModalProps) => {
+  const { openModal } = useModal();
+
+  if (isHost) return null;
+
+  const handleReportClick = () => {
+    openModal(
+      <ReportReasonModal
+        nickname={nickname}
+        onReport={onReport}
+      />
+    );
+  };
 
   return (
-    <div
-      className="fixed inset-0 bg-[#1B1B1B]/60 flex items-center justify-center z-50"
-      onClick={closeModal}
-    >
-      <CommonCard
-        size="smModal"
-        className="bg-white rounded-lg shadow-lg p-5 max-w-sm w-full"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="text-lg font-semibold text-center mb-2">{title}</h2>
-        {description && (
-          <p className="text-xs text-gray-500 text-center mb-4">{description}</p>
+    <div className="flex flex-col items-center w-full">
+      <h2 className="text-lg font-bold text-center mb-[0.938rem]">{name}</h2>
+      <div className="flex flex-col w-full gap-[1.25rem]">
+        <button
+          onClick={handleReportClick}
+          className={`py-[0.625rem] font-medium text-[0.875rem] rounded-lg ${
+            onKick
+              ? "bg-[#F5F5F5] text-[#424242]"
+              : "bg-[#424242] text-[#FEFEFE] w-full"
+          }`}
+        >
+          신고하기
+        </button>
+        {onKick && (
+          <button
+            onClick={() => onKick(nickname)}
+            className="bg-[#424242] text-[FEFEFE] text-sm py-[0.625rem] rounded-lg mt-[0.625rem]"
+          >
+            강퇴하기
+          </button>
         )}
-        <div className="flex justify-center gap-2">
-          {buttons.map((btn, index) => (
-            <button
-              key={index}
-              onClick={btn.onClick}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                btn.isPrimary
-                  ? "bg-[#1B1B1B] text-white"
-                  : "bg-gray-200 text-gray-700"
-              }`}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
-      </CommonCard>
+      </div>
     </div>
   );
 };
 
-export default CommonModal;
+export default ChatMemberModal;

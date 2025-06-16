@@ -1,22 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-interface ModalButton {
-  label: string;
-  onClick: () => void;
-  isPrimary?: boolean;
-}
-
 interface ModalContextType {
   isOpen: boolean;
-  title: string;
-  description?: string;
-  buttons: ModalButton[];
-  openModal: (props: {
-    title: string;
-    description?: string;
-    buttons: ModalButton[];
-  }) => void;
+  openModal: (content: ReactNode) => void;
   closeModal: () => void;
+  content: ReactNode | null; 
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -31,37 +19,34 @@ export const useModal = () => {
 
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState<string | undefined>(undefined);
-  const [buttons, setButtons] = useState<ModalButton[]>([]);
+  const [content, setContent] = useState<ReactNode | null>(null);
 
-  const openModal = ({
-    title,
-    description,
-    buttons,
-  }: {
-    title: string;
-    description?: string;
-    buttons: ModalButton[];
-  }) => {
-    setTitle(title);
-    setDescription(description);
-    setButtons(buttons);
+  const openModal = (modalContent: ReactNode) => {
+    setContent(modalContent);
     setIsOpen(true);
   };
 
   const closeModal = () => {
     setIsOpen(false);
-    setTitle("");
-    setDescription(undefined);
-    setButtons([]);
+    setContent(null);
   };
 
   return (
-    <ModalContext.Provider
-      value={{ isOpen, title, description, buttons, openModal, closeModal }}
-    >
+    <ModalContext.Provider value={{ isOpen, openModal, closeModal, content }}>
       {children}
+      {isOpen && content && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[1.656rem]"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white p-6 rounded-[1rem] shadow-lg w-full max-w-md"
+            onClick={(e) => e.stopPropagation()} 
+          >
+            {content}
+          </div>
+        </div>
+      )}
     </ModalContext.Provider>
   );
 };

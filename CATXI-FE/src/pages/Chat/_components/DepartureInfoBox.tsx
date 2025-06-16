@@ -1,15 +1,43 @@
+import { useParams, useOutletContext } from 'react-router-dom';
+import { useReadyRequest } from '../../../hooks/mutation/chat/useReadyQuest';
+import type { ChatRoomDetail } from '../../../types/chat/chatRoomDetail';
+import { useState } from 'react';
+import ReadyLockedBox from './Info/ReadyLockedBox';
+import DefaultBox from './Info/DefaultBox';
+
+interface ChatContext {
+  hostEmail: string;
+  myEmail: string;
+  chatRoom?: ChatRoomDetail;
+}
+
 const DepartureInfoBox = () => {
+  const { roomId } = useParams();
+  const { hostEmail, myEmail, chatRoom } = useOutletContext<ChatContext>();
+  const [isRequested, setIsRequested] = useState(false);
+  const { mutate } = useReadyRequest();
+
+  const isHost = hostEmail === myEmail;
+
+  const handleRequestReady = () => {
+    if (!roomId) return;
+    mutate(Number(roomId));
+    setIsRequested(true);
+  };
+
+  if (!chatRoom) return null;
+
+  if (chatRoom.roomStatus === 'READY_LOCKED') {
+    return <ReadyLockedBox departAt={chatRoom.departAt} />;
+  }
+
   return (
-    <div className="w-full bg-[#F3F7FF] rounded-xl px-4 py-4.5 flex justify-between items-center mb-5">
-      <div>
-        <p className="text-sm font-semibold text-blue-600">09시 47분 출발</p>
-        <p className="text-xs text-gray-500">위 시간까지 장소로 모여주세요!</p>
-      </div>
-      <div className="bg-white rounded-md px-2 py-1 text-center">
-        <p className="text-[10px] text-gray-400">남은 시간</p>
-        <p className="text-sm font-semibold text-gray-700">7분</p>
-      </div>
-    </div>
+    <DefaultBox
+      chatRoom={chatRoom}
+      isHost={isHost}
+      isRequested={isRequested}
+      onRequestReady={handleRequestReady}
+    />
   );
 };
 

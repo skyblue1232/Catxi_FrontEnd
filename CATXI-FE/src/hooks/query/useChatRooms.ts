@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchChatRooms } from '../../apis/chatRooms';
-import type { ChatRoomResponse } from '../../types/chatData';
+import { fetchChatRooms } from '../../apis/chat/chatRooms';
+import type { ChatRoomResponse } from '../../types/chat/chatData';
 
 interface GetChatRoomsParams {
   direction: string;
@@ -16,8 +16,7 @@ export const useChatRooms = (params: GetChatRoomsParams) => {
     staleTime: 1000 * 60 * 1, 
     refetchOnWindowFocus: false, 
     refetchOnReconnect: false,
-    refetchOnMount: false, 
-    retry: 0, 
+    retry: 1, 
     enabled: !!params.direction && !!params.station && !!params.sort, 
   });
 };
