@@ -16,7 +16,8 @@ const Redirection = () => {
           `/auth/login/kakao?code=${code}`
         );
         const accessToken = headers["access"];
-        const isNewUser = headers["isNewUser"];
+        const isNewUser =
+          headers["isnewuser"] === true || headers["isnewuser"] === "true";
         if (data.success && accessToken) {
           Storage.setAccessToken(accessToken);
           if (isNewUser) {

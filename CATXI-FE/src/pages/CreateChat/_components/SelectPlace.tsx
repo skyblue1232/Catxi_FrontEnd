@@ -25,7 +25,7 @@ const SelectPlace = ({ type }: SelectPlaceProps) => {
       ? IN_CAMPUS_PLACES
       : OUT_CAMPUS_PLACES;
   return (
-    <div className="w-full h-full flex flex-col gap-5">
+    <div className="w-full px-1 h-full flex flex-col gap-5">
       <p className="text-xl font-medium">
         {isStart ? "어디에서 출발하시나요?" : "어디로 가시나요?"}
       </p>
