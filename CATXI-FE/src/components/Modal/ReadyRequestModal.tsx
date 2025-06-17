@@ -10,7 +10,7 @@ interface Props {
   onAccept: () => void;
   onReject: () => void;
   timeoutSec?: number;
-  isHost?: boolean; 
+  isHost: boolean; 
 }
 
 const ReadyRequestModal = ({
