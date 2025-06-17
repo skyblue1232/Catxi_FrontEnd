@@ -37,8 +37,8 @@ export default defineConfig({
         ],
         start_url: ".",
         display: "standalone",
-        theme_color: "#FAFAFA",
-        background_color: "#FAFAFA"
+        theme_color: "#FEFEFE",
+        background_color: "#FEFEFE"
       },
       workbox: {
         globPatterns: [
