@@ -14,15 +14,13 @@ const ChatCard = ({ data }: Props) => {
   const { openModal } = useModal();
 
   const handleJoinClick = () => {
-    openModal(
-      <JoinChatModalContent roomId={data.roomId} />
-    );
+    openModal(<JoinChatModalContent roomId={data.roomId} />);
   };
 
   const maskName = (name: string) => {
     if (name.length <= 1) return name;
     const mid = Math.floor(name.length / 2);
-    return name.substring(0, mid) + '*' + name.substring(mid + 1);
+    return name.substring(0, mid) + "*" + name.substring(mid + 1);
   };
 
   return (
@@ -30,10 +28,16 @@ const ChatCard = ({ data }: Props) => {
       <div className="rounded-lg p-[1.719rem] bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] transition cursor-pointer">
         <div className="flex justify-between items-center">
           <div className="flex flex-col p-2">
-            <span className="font-medium text-[14px]">{`${maskName(data.hostName)}(${data.hostNickname || '방장'})`}</span>
-            <span className="font-regular text-[12px]">매칭 성공 {data.matchCount}회</span>
+            <span className="font-medium text-[14px]">{`${maskName(
+              data.hostName
+            )}(${data.hostNickname || "방장"})`}</span>
+            <span className="font-regular text-[12px]">
+              매칭 성공 {data.matchCount}회
+            </span>
           </div>
-          <span className="text-xs text-[#8C46F6] font-medium">{getDepartText(data.departAt)}</span>
+          <span className="text-xs text-[#8C46F6] font-medium">
+            {getDepartText(data.departAt)}
+          </span>
         </div>
 
         <div className="w-full bg-[#E0E0E0] h-[1px] my-[0.938rem]" />
@@ -42,7 +46,8 @@ const ChatCard = ({ data }: Props) => {
           <div className="flex flex-col gap-[0.5rem]">
             <span className="flex justify-center">출발지</span>
             <span className="text-[18px] font-medium">
-              {stationDisplayMap[data.startPoint.toUpperCase()] || data.startPoint}
+              {stationDisplayMap[data.startPoint.toUpperCase()] ||
+                data.startPoint}
             </span>
           </div>
 
@@ -67,8 +72,9 @@ const ChatCard = ({ data }: Props) => {
                   const [hour, minute] = time.split(":");
                   return (
                     <>
-                      {`${Number(month)}월 ${Number(day)}일`}<br />
-                      {minute === '00' ? `${hour}시` : `${hour}시 ${minute}분`}
+                      {`${Number(month)}월 ${Number(day)}일`}
+                      <br />
+                      {minute === "00" ? `${hour}시` : `${hour}시 ${minute}분`}
                     </>
                   );
                 })()}
@@ -79,8 +85,11 @@ const ChatCard = ({ data }: Props) => {
 
             <div className="flex flex-col ml-[1.25rem]">
               <span>전체인원</span>
-              <span className="flex justify-center font-medium">
-                <span className="font-medium text-[13px] mb-1">{data.currentSize}</span>/{data.recruitSize+1}
+              <span className="flex justify-center items-center font-medium">
+                <span className="font-medium text-[13px] mb-1">
+                  {data.currentSize}
+                </span>
+                /{data.recruitSize + 1}
               </span>
             </div>
           </div>

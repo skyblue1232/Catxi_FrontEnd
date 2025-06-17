@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
-import CategoryTab from './_components/CategoryTab';
-import LocationFilter from './_components/LocationFilter';
-import ChatCardList from './_components/ChatCardList';
-import FloatingButton from './_components/FloatingButton';
+import { useState, useEffect } from "react";
+import CategoryTab from "./_components/CategoryTab";
+import LocationFilter from "./_components/LocationFilter";
+import ChatCardList from "./_components/ChatCardList";
+import FloatingButton from "./_components/FloatingButton";
 
 const HomePage = () => {
-  const [direction, setDirection] = useState<'FROM_SCHOOL' | 'TO_SCHOOL'>('FROM_SCHOOL');
-  const [selectedLocations, setSelectedLocations] = useState<Record<'FROM_SCHOOL' | 'TO_SCHOOL', string | null>>({
-    FROM_SCHOOL: 'YEOKGOK_ST',
-    TO_SCHOOL: 'YEOKGOK_ST',
+  const [direction, setDirection] = useState<"FROM_SCHOOL" | "TO_SCHOOL">(
+    "FROM_SCHOOL"
+  );
+  const [selectedLocations, setSelectedLocations] = useState<
+    Record<"FROM_SCHOOL" | "TO_SCHOOL", string | null>
+  >({
+    FROM_SCHOOL: "YEOKGOK_ST",
+    TO_SCHOOL: "YEOKGOK_ST",
   });
-  const [sort, setSort] = useState<'departAt' | 'createdTime'>('departAt');
+  const [sort, setSort] = useState<"departAt" | "createdTime">("departAt");
   const page = 0;
 
   useEffect(() => {
@@ -25,12 +29,12 @@ const HomePage = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col">
+    <div className="w-full h-screen flex flex-col bg-[#FAFAFA]">
       <div className="sticky top-0 z-50 bg-white">
         <CategoryTab direction={direction} setDirection={setDirection} />
       </div>
 
-      <div className="sticky top-[52px] z-40 bg-[#FAFAFA]">
+      <div className="sticky top-[52px] z-40">
         <LocationFilter
           station={selectedLocations[direction]}
           sort={sort}
@@ -38,10 +42,10 @@ const HomePage = () => {
           onSelectSort={setSort}
         />
 
-        <div className="flex-1 overflow-y-scroll mb-[6rem]"> 
+        <div className="flex-1 overflow-y-scroll mb-[6rem]">
           <ChatCardList
             direction={direction}
-            station={selectedLocations[direction] || ''}
+            station={selectedLocations[direction] || ""}
             sort={sort}
             page={page}
           />
