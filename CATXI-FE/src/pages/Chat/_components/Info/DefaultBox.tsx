@@ -5,12 +5,11 @@ import { useMemo } from 'react';
 
 interface Props {
   chatRoom: ChatRoomDetail;
-  isRequested: boolean;
   myEmail: string;
   onRequestReady: () => void;
 }
 
-const DefaultBox = ({ chatRoom, isRequested, myEmail, onRequestReady }: Props) => {
+const DefaultBox = ({ chatRoom, myEmail, onRequestReady }: Props) => {
   const isHost = myEmail === chatRoom.hostEmail;
 
   const departText = useMemo(() => {
@@ -39,13 +38,15 @@ const DefaultBox = ({ chatRoom, isRequested, myEmail, onRequestReady }: Props) =
 
       {isHost && (
         <button
-          disabled={isRequested}
+          disabled={chatRoom.roomStatus === 'READY_LOCKED'}
           onClick={onRequestReady}
           className={`rounded-md px-[1.25rem] py-[0.625rem] text-sm font-semibold ${
-            isRequested ? 'bg-gray-300 text-gray-500' : 'bg-[#424242] text-white'
+            chatRoom.roomStatus === 'READY_LOCKED'
+              ? 'bg-gray-300 text-gray-500'
+              : 'bg-[#424242] text-white'
           }`}
         >
-          {isRequested ? '전송됨' : '준비완료'}
+          {chatRoom.roomStatus === 'READY_LOCKED' ? '전송됨' : '준비완료'}
         </button>
       )}
     </div>

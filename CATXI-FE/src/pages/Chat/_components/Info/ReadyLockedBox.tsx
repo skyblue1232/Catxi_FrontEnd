@@ -8,7 +8,7 @@ const ReadyLockedBox = ({ departAt }: Props) => {
   const { formattedTime, remainingMinutes, isUrgent } = useMemo(() => {
     const departDate = new Date(departAt);
     const nowUTC = new Date();
-    const now = new Date(nowUTC.getTime() + 9 * 60 * 60 * 1000);
+    const now = new Date(nowUTC.getTime());
 
     const hour = departDate.getHours().toString().padStart(2, '0');
     const minute = departDate.getMinutes().toString().padStart(2, '0');
