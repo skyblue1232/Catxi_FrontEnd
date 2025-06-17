@@ -43,6 +43,9 @@ export function useChatConnection(roomId: number) {
     acceptReady(roomId);
     setAcceptCount((prev) => prev + 1);
   };
+  const handleReject = () => {
+    rejectReady(roomId); 
+  };
 
   useEffect(() => {
     if (chatHistory?.data && email) {
@@ -81,7 +84,7 @@ export function useChatConnection(roomId: number) {
           current={acceptCount}
           total={chatRoomDetail?.data.currentSize ?? 1}
           onAccept={handleAccept}
-          onReject={() => rejectReady(roomId)}
+          onReject={handleReject}
           isHost={email === hostEmail}
         />
       );
