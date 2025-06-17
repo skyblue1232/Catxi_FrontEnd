@@ -63,7 +63,24 @@ const TabBar = () => {
 
   return (
     <>
-      <nav className="fixed max-w-107.5 bottom-0 h-[3.75rem] px-[3.906rem] w-full bg-white flex justify-center items-center shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)]">
+      <nav
+        className="
+          fixed 
+          bottom-0 
+          left-1/2 
+          -translate-x-1/2
+          w-full 
+          max-w-[26.563rem] 
+          h-[3.75rem] 
+          px-[3.906rem] 
+          bg-white 
+          flex 
+          justify-center 
+          items-center 
+          shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)] 
+          z-50
+        "
+      >
         <div className="cursor-pointer" onClick={handleHomeClick}>
           {isExact('/home') ? <HomeButton /> : <HomeIcon />}
         </div>

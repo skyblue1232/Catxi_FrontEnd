@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createChat } from "../../apis/createChat";
 import type { createChatRequest } from "../../types/createChat";
 import { useChatStore } from "../../store/createChatStore";
+import { queryClient } from "../../App";
 export const useCreateChat = () => {
   const navigate = useNavigate();
   const { clearAnswer } = useChatStore();
@@ -22,6 +23,8 @@ export const useCreateChat = () => {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+      
       clearAnswer();
       navigate("/home");
     },

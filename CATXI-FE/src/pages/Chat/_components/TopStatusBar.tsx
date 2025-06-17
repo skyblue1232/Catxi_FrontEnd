@@ -4,6 +4,7 @@ import type { ChatRoomDetail } from '../../../types/chat/chatRoomDetail';
 import { useLeaveChatRoom, useDeleteChatRoom } from '../../../hooks/mutation/chat/useChatDelete';
 import { useModal } from '../../../contexts/ModalContext';
 import LeaveRoomModal from '../../../components/Modal/LeaveRoomModal';
+import { queryClient } from '../../../App';
 
 interface ChatContext {
   hostEmail: string;
@@ -22,11 +23,15 @@ const TopStatusBar = () => {
   const current = (chatRoom?.currentSize ?? 0);
   const total = (chatRoom?.recruitSize ?? 0) + 1;
   const statusTextMap = { WAITING: '모집중', READY_LOCKED: '준비 완료', MATCHED: '매칭 완료', EXPIRED: '만료됨' };
-  const statusColorMap = { WAITING: '#7424F5', READY_LOCKED: '#1AD494', MATCHED: '#A0AEC0', EXPIRED: '#D1D5DB' };
+  const statusColorMap = { WAITING: '#7424F5', READY_LOCKED: '#08ACFF', MATCHED: '#1AD494', EXPIRED: '#D1D5DB' };
   const statusText = chatRoom?.roomStatus ? statusTextMap[chatRoom.roomStatus] : '';
   const statusColor = chatRoom?.roomStatus ? statusColorMap[chatRoom.roomStatus] : '#D1D5DB';
   const isHost = myEmail === chatRoom?.hostEmail;
-  const handleBackClick = () => { navigate('/home') };
+  
+  const handleBackClick = () => { 
+    queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
+    navigate('/home') 
+  };
 
   const handleLeave = () => {
     if (!roomId) return;

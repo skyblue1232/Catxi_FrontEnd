@@ -57,7 +57,7 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
     if (!roomId) return;
     reportUser({
       roomId: Number(roomId),
-      targetUserId: email,
+      targetUserEmail: email,
       reason,
     });
   };
@@ -86,7 +86,7 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
 
   const handleNameClick = () => {
     if (isHost && isMyself) return;
-    if (!isHost && (isMyself || isTargetHost)) return;
+    // if (isHost && isTargetHost) return;
 
     openModal(
       <ChatMemberModal
@@ -104,11 +104,11 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
 
   return (
     <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-      <div className="flex items-center gap-[0.5rem] mb-1">
-        <p
-          className="text-xs text-gray-600 cursor-pointer hover:underline"
-          onClick={handleNameClick}
-        >
+      <div 
+        className="flex items-center gap-[0.5rem] mb-1"
+        onClick={handleNameClick}
+      >
+        <p className="text-xs text-gray-600 cursor-pointer hover:underline">
           {displayName}
         </p>
         {email === hostEmail && (
