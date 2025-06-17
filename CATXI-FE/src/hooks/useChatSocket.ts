@@ -56,9 +56,8 @@ export function useChatSocket(
         readySubRef.current = stompClient.subscribe(
           `/topic/ready/${roomId}`,
           (msg) => {
-            if (!onReadyMessage) return;
             const parsed = parseReadyMessage(JSON.parse(msg.body));
-            onReadyMessage(parsed);
+            onReadyMessage?.(parsed);
           },
           { Authorization: `Bearer ${jwtToken}` }
         );
