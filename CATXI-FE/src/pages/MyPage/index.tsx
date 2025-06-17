@@ -96,6 +96,7 @@ const MyPage = () => {
                   <p className="text-sm text-[#6d6d6d]">로딩 중입니다...</p>
                 </div>
               )}
+              <div className="h-15" aria-hidden />
             </>
           )}
         </div>
