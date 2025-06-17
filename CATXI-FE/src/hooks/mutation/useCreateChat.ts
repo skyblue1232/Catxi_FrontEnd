@@ -24,15 +24,15 @@ export const useCreateChat = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
-      
+
       clearAnswer();
       navigate("/home");
     },
     onError: (err: { message: string }) => {
-      alert(err.message);
+      const confirmed = window.confirm(err.message);
+      if (confirmed) navigate("/home");
     },
   });
-
   return {
     createChatRoom,
   };
