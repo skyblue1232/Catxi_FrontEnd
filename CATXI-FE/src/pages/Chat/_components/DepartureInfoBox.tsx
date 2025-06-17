@@ -13,13 +13,22 @@ interface ChatContext {
 
 const DepartureInfoBox = () => {
   const { roomId } = useParams();
-  const { myEmail, chatRoom } = useOutletContext<ChatContext>();
+  const { myEmail, chatRoom, refetchChatRoomDetail } = useOutletContext<ChatContext & {
+    refetchChatRoomDetail: () => void;
+  }>();
+
   const [isRequested, setIsRequested] = useState(false);
   const { mutate } = useReadyRequest();
 
   const handleRequestReady = () => {
     if (!roomId) return;
-    mutate(Number(roomId));
+
+    mutate(Number(roomId), {
+      onSuccess: () => {
+        refetchChatRoomDetail();
+        setIsRequested(true);
+      }
+    });
     setIsRequested(true);
   };
 

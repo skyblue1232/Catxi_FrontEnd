@@ -72,7 +72,10 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
       {
         onSuccess: () => {
           closeModal();
+          
+          if (email === myEmail) {
           navigate("/home");
+        }
         },
         onError: () => {
           alert("강퇴에 실패했습니다.");

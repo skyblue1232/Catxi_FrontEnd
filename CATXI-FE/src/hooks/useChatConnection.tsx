@@ -17,7 +17,7 @@ export function useChatConnection(roomId: number) {
   const [acceptCount, setAcceptCount] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [readyMessages, setReadyMessages] = useState<ReadyMessage[]>([]);
-  const { data: chatRoomDetail, isLoading, isError } = useChatRoomDetail(roomId);
+  const { data: chatRoomDetail, isLoading, isError, refetch: refetchChatRoomDetail } = useChatRoomDetail(roomId);
   const { data: chatHistory } = useChatMessages(roomId);
   const { openModal } = useModal();
   const { mutate: acceptReady } = useReadyAccept();
@@ -113,6 +113,7 @@ export function useChatConnection(roomId: number) {
     hostEmail,
     hostNickname,
     chatRoomDetail: chatRoomDetail?.data,
+    refetchChatRoomDetail,
     isLoading,
     isError,
   };
