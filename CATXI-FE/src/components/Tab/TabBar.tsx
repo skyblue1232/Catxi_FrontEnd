@@ -7,14 +7,8 @@ import HomeButton from '../../assets/icons/HomeButton.svg?react';
 import MyIcon from '../../assets/icons/MyIcon.svg?react';
 import MyButton from '../../assets/icons/MyButton.svg?react';
 import SimpleToast from '../SimpleToast';
-import { jwtDecode } from 'jwt-decode';
 import Storage from '../../utils/storage';
-import axiosInstance from '../../apis/axios';
-
-interface JwtPayload {
-  email: string;
-  [key: string]: any;
-}
+import { useMyChatRoomId } from '../../hooks/query/useChatRoomId';
 
 const TabBar = () => {
   const location = useLocation();
@@ -25,43 +19,35 @@ const TabBar = () => {
   const currentPath = location.pathname;
   const showTabRoutes = ['/home', '/chat', '/myPage'];
   const isTabVisible = showTabRoutes.some((path) => currentPath.startsWith(path));
-  if (!isTabVisible) return null;
 
   const isExact = (path: string) => currentPath === path;
+
+  const token = Storage.getAccessToken();
+  const { refetch, isFetching } = useMyChatRoomId({ enabled: false }); 
 
   const handleHomeClick = () => {
     navigate('/home');
   };
 
   const handleChatClick = async () => {
-    if (loading) return;
-
-    const token = Storage.getAccessToken();
     if (!token) {
       setToastMsg('로그인이 필요합니다.');
+      navigate('/');
       return;
     }
 
+    if (loading || isFetching) return;
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const decoded = jwtDecode<JwtPayload>(token);
-      const email = decoded?.email;
-
-      if (!email) {
-        setToastMsg('사용자 정보를 불러올 수 없습니다.');
-        return;
-      }
-
-      const res = await axiosInstance.get(`/chat/rooms/myid?email=${email}`);
-      const roomId: number = res.data.data;
-
+      const { data: roomId } = await refetch();
       if (roomId && roomId !== 0) {
         navigate(`/chat/${roomId}`);
       } else {
         setToastMsg('참여 중인 채팅방이 없습니다.');
       }
-    } catch (err) {
-      setToastMsg('채팅방 정보를 불러오지 못했습니다.');
+    } catch {
+      setToastMsg('채팅방에 참여하고 있지 않습니다.');
     } finally {
       setLoading(false);
     }
@@ -71,9 +57,30 @@ const TabBar = () => {
     navigate('/myPage');
   };
 
+  if (!isTabVisible) {
+    return toastMsg ? <SimpleToast message={toastMsg} onClose={() => setToastMsg(null)} /> : null;
+  }
+
   return (
     <>
-      <nav className="fixed max-w-107.5 bottom-0 h-[3.75rem] px-[3.906rem] w-full bg-white flex justify-center items-center shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)]">
+      <nav
+        className="
+          fixed 
+          bottom-0 
+          left-1/2 
+          -translate-x-1/2
+          w-full 
+          max-w-[26.563rem] 
+          h-[3.75rem] 
+          px-[3.906rem] 
+          bg-white 
+          flex 
+          justify-center 
+          items-center 
+          shadow-[0_-4px_5px_0_rgba(0,0,0,0.05)] 
+          z-50
+        "
+      >
         <div className="cursor-pointer" onClick={handleHomeClick}>
           {isExact('/home') ? <HomeButton /> : <HomeIcon />}
         </div>
@@ -93,3 +100,4 @@ const TabBar = () => {
 };
 
 export default TabBar;
+

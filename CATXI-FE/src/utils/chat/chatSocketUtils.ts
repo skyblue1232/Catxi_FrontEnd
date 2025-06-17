@@ -31,7 +31,7 @@ export const createLocalMessage = (
   tempId: number,
   message: string,
   myEmail: string,
-  roomId: string
+  roomId: number,
 ): ChatMessage => {
   const now = new Date();
   const sentAt = new Date(now.getTime() - 9 * 60 * 60 * 1000).toISOString();

@@ -1,6 +1,8 @@
 import { useModal } from "../../../contexts/ModalContext";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import ChatMemberModal from "../../../components/Modal/UserModal";
+import { useReportUser } from "../../../hooks/mutation/chat/useReportUser";
+import { useKickUser } from "../../../hooks/mutation/chat/useKickUser.ts";
 
 interface ChatContext {
   nicknameMap: Record<string, string>;
@@ -27,7 +29,7 @@ const maskName = (identifier: string | null | undefined) => {
 
 const formatTimestamp = (sentAt: string) => {
   const utc = new Date(sentAt);
-  const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+  const kst = new Date(utc.getTime());
   return kst.toLocaleTimeString("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
@@ -36,9 +38,12 @@ const formatTimestamp = (sentAt: string) => {
 };
 
 const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
-  const { openModal } = useModal();
-  const { nicknameMap, hostEmail, myEmail } =
-    useOutletContext<ChatContext>();
+  const { openModal, closeModal } = useModal();
+  const { nicknameMap, hostEmail, myEmail } = useOutletContext<ChatContext>();
+  const { roomId } = useParams();
+  const { mutate: reportUser } = useReportUser();
+  const { mutate: kickUser } = useKickUser();
+  const navigate = useNavigate();
 
   const isMyself = email === myEmail;
   const isHost = myEmail === hostEmail;
@@ -46,43 +51,63 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
 
   const nickname = nicknameMap[email];
   const masked = maskName(email);
-  const displayName = nickname ? `${masked} (${nickname})` : masked;
+  const displayName = nickname ? nickname : masked;
+
+  const handleReport = (reason: string) => {
+    if (!roomId) return;
+    reportUser({
+      roomId: Number(roomId),
+      targetUserEmail: email,
+      reason,
+    });
+  };
+
+  const handleKick = () => {
+    if (!roomId) return;
+    kickUser(
+      {
+        roomId: Number(roomId),
+        targetEmail: email,
+      },
+      {
+        onSuccess: () => {
+          closeModal();
+          
+          if (email === myEmail) {
+          navigate("/home");
+        }
+        },
+        onError: () => {
+          alert("강퇴에 실패했습니다.");
+        },
+      }
+    );
+  };
 
   const handleNameClick = () => {
-    if (isHost && isMyself) return;
-    if (!isHost && (isMyself || isTargetHost)) return;
-    if (isHost && !isTargetHost) {
-      openModal(
-        <ChatMemberModal
-          name={displayName}
-          nickname={nickname}
-          isHost={false}
-          isMyself={false}
-          onReport={() => alert(`신고가 접수되었습니다.`)}
-          onKick={() => alert(`강퇴처리 되었습니다.`)}
-        />
-      );
-      return;
-    }
+    if (isMyself) return;
 
     openModal(
       <ChatMemberModal
-        name={masked}
+        name={displayName}
         nickname={nickname}
-        isHost={false}
-        isMyself={false}
-        onReport={() => alert(`신고가 접수되었습니다.`)}
+        isHost={isHost}
+        isMyself={isMyself}
+        roomId={parseInt(roomId ?? "0")}
+        targetUserId={email}
+        onReport={(reason) => handleReport(reason)}
+        onKick={isHost && !isTargetHost ? () => handleKick() : undefined}
       />
     );
   };
 
   return (
     <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-      <div className="flex items-center gap-[0.5rem] mb-1">
-        <p
-          className="text-xs text-gray-600 cursor-pointer hover:underline"
-          onClick={handleNameClick}
-        >
+      <div 
+        className="flex items-center gap-[0.5rem] mb-1"
+        onClick={handleNameClick}
+      >
+        <p className="text-xs text-gray-600 cursor-pointer hover:underline">
           {displayName}
         </p>
         {email === hostEmail && (

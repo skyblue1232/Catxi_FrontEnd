@@ -2,12 +2,11 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import ChatInput from '../pages/Chat/_components/ChatInput';
 import { useChatConnection } from '../hooks/useChatConnection';
-import { useChatRoomDetail } from '../hooks/query/useChatDetail';
 import LogoText from '../assets/icons/logoText.svg?react';
 import { useNavigationBlocker } from '../hooks/navigation/useNavigationBlocker';
 
 const ChatLayout = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const { roomId } = useParams();
   const parsedRoomId = Number(roomId);
   const [input, setInput] = useState('');
@@ -16,30 +15,13 @@ const ChatLayout = () => {
     messages,
     myEmail,
     sendMessage,
-  } = useChatConnection(parsedRoomId);
-
-  const {
-    data: chatRoomDetail,
+    nicknameMap,
+    hostEmail,
+    hostNickname,
+    chatRoomDetail,
     isLoading,
     isError,
-  } = useChatRoomDetail(parsedRoomId);
-
-  const nicknameMap = useMemo(() => {
-    const emails = chatRoomDetail?.data?.participantEmails || [];
-    const nicknames = chatRoomDetail?.data?.participantNicknames || [];
-    return emails.reduce((acc, email, i) => {
-      acc[email] = nicknames[i];
-      return acc;
-    }, {} as Record<string, string>);
-  }, [chatRoomDetail]);
-
-  const hostEmail = chatRoomDetail?.data?.hostEmail ?? '';
-
-  const hostNickname = useMemo(() => {
-    if (!chatRoomDetail?.data) return '';
-    const idx = chatRoomDetail.data.participantEmails.findIndex((e) => e === hostEmail);
-    return chatRoomDetail.data.participantNicknames[idx] || hostEmail;
-  }, [chatRoomDetail, hostEmail]);
+  } = useChatConnection(parsedRoomId);
 
   useNavigationBlocker();
 
@@ -55,7 +37,7 @@ const ChatLayout = () => {
       myEmail,
       hostEmail,
       hostNickname,
-      chatRoom: chatRoomDetail?.data,
+      chatRoom: chatRoomDetail,
       nicknameMap,
     }),
     [messages, myEmail, hostEmail, hostNickname, chatRoomDetail, nicknameMap]
@@ -72,15 +54,17 @@ const ChatLayout = () => {
     );
   }
 
-  if (isError || !chatRoomDetail?.data) {
+  if (isError || !chatRoomDetail) {
     return (
       <div className="flex justify-center items-center h-[90vh]">
         <div className="flex flex-col items-center gap-4 text-center">
-          <LogoText className="w-[140px] h-auto" />
+          <LogoText className="w-[10rem] h-auto" />
           <button
             onClick={() => navigate('/')}
             className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
-          >retry</button>
+          >
+            retry
+          </button>
         </div>
       </div>
     );

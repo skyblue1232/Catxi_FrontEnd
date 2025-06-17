@@ -5,19 +5,21 @@ import { useMemo } from 'react';
 
 interface Props {
   chatRoom: ChatRoomDetail;
-  isHost: boolean;
   isRequested: boolean;
+  myEmail: string;
   onRequestReady: () => void;
 }
 
-const DefaultBox = ({ chatRoom, isHost, isRequested, onRequestReady }: Props) => {
+const DefaultBox = ({ chatRoom, isRequested, myEmail, onRequestReady }: Props) => {
+  const isHost = myEmail === chatRoom.hostEmail;
+
   const departText = useMemo(() => {
     const departDate = new Date(chatRoom.departAt);
     const now = new Date();
     const isTomorrow = departDate.getDate() !== now.getDate();
     const hour = departDate.getHours().toString().padStart(2, '0');
     const minute = departDate.getMinutes().toString().padStart(2, '0');
-    return `${isTomorrow ? '내일' : '오늘'} ${hour}시 ${minute}분에 출발해요`;
+    return `${isTomorrow ? '내일' : '오늘'} ${minute === '00' ? `${hour}시` : `${hour}시 ${minute}분`}에 출발해요`;
   }, [chatRoom]);
 
   const displayStart = stationDisplayMap[chatRoom.startPoint] ?? chatRoom.startPoint;
