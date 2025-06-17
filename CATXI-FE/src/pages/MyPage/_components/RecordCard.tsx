@@ -1,4 +1,3 @@
-import Close from "../../../assets/icons/cardClose.svg?react";
 import type { GetHistory } from "../../../types/history";
 import { locationLabelMap } from "../_utils/location";
 const RecordCard = ({
@@ -21,12 +20,7 @@ const RecordCard = ({
 
   return (
     <div className="bg-[#FEFEFE] w-full min-h-40 py-5 px-7 flex flex-col justify-center gap-3.75 rounded-[10px] text-[#424242] shadow-[0_0_4px_0_rgba(0,0,0,0.10)]">
-      <div className="flex justify-between items-center">
-        <p className="text-base font-medium">{formatted}</p>
-        <div className="cursor-pointer">
-          <Close />
-        </div>
-      </div>
+      <p className="text-base font-medium">{formatted}</p>
       <div className="w-full border-t-1 border-[#E0E0E0]" />
       <div className="flex flex-col gap-2.5">
         <div className="flex gap-3.75 items-center">
