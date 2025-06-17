@@ -17,7 +17,7 @@ const DepartureInfoBox = () => {
     refetchChatRoomDetail: () => void;
   }>();
 
-  const [isRequested, setIsRequested] = useState(false);
+  const [_isRequested, setIsRequested] = useState(false);
   const { mutate } = useReadyRequest();
 
   const handleRequestReady = () => {
@@ -34,7 +34,7 @@ const DepartureInfoBox = () => {
 
   if (!chatRoom) return null;
 
-  if (chatRoom.roomStatus === 'READY_LOCKED') {
+  if (['READY_LOCKED', 'MATCHED'].includes(chatRoom.roomStatus)) {
     return <ReadyLockedBox departAt={chatRoom.departAt} />;
   }
 
@@ -42,7 +42,6 @@ const DepartureInfoBox = () => {
     <DefaultBox
       chatRoom={chatRoom}
       myEmail={myEmail} 
-      isRequested={isRequested}
       onRequestReady={handleRequestReady}
     />
   );

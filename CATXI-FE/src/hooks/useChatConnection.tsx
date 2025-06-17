@@ -81,6 +81,7 @@ export function useChatConnection(roomId: number) {
           total={chatRoomDetail?.data.currentSize ?? 1}
           onAccept={handleAccept}
           onReject={() => rejectReady(roomId)}
+          isHost={email === hostEmail}
         />
       );
 
