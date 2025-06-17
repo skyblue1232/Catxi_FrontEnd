@@ -85,8 +85,7 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
   };
 
   const handleNameClick = () => {
-    if (isHost && isMyself) return;
-    // if (isHost && isTargetHost) return;
+    if (isMyself) return;
 
     openModal(
       <ChatMemberModal
