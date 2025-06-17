@@ -1,29 +1,58 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 
 interface Props {
   departAt: string;
 }
 
 const ReadyLockedBox = ({ departAt }: Props) => {
-  const { formattedTime, remainingMinutes, isUrgent } = useMemo(() => {
-    const departDate = new Date(departAt);
-    const nowUTC = new Date();
-    const now = new Date(nowUTC.getTime() + 9 * 60 * 60 * 1000);
+  const navigate = useNavigate();
+  const departDate = useMemo(() => new Date(departAt), [departAt]);
 
+  const [remainingSec, setRemainingSec] = useState(() =>
+    Math.max(Math.floor((departDate.getTime() - Date.now()) / 1000), 0)
+  );
+
+  useEffect(() => {
+    if (remainingSec === 0) {
+      navigate('/home');
+    }
+  }, [remainingSec, navigate]);
+
+  useEffect(() => {
+    if (remainingSec > 60) return;
+
+    const timer = setInterval(() => {
+      setRemainingSec((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [remainingSec]);
+
+  const { formattedTime, remainText, isUrgent } = useMemo(() => {
     const hour = departDate.getHours().toString().padStart(2, '0');
     const minute = departDate.getMinutes().toString().padStart(2, '0');
     const formatted = `${hour}시 ${minute}분 출발`;
 
-    const diffMs = departDate.getTime() - now.getTime();
-    const diffMinutes = Math.max(Math.floor(diffMs / 60000), 0);
-    const isUrgent = diffMinutes <= 5;
+    const remainMin = Math.floor(remainingSec / 60);
+    const remainText = remainingSec <= 60
+      ? `${remainingSec}초`
+      : `${remainMin}분`;
+
+    const isUrgent = remainingSec <= 600;
 
     return {
       formattedTime: formatted,
-      remainingMinutes: diffMinutes,
+      remainText,
       isUrgent,
     };
-  }, [departAt]);
+  }, [departDate, remainingSec]);
 
   return (
     <div className="w-full bg-[#F3F7FF] rounded-xl px-[1.625rem] py-[1.125rem] flex justify-between items-center mb-5">
@@ -37,7 +66,7 @@ const ReadyLockedBox = ({ departAt }: Props) => {
           className="text-[1.25rem] font-medium"
           style={{ color: isUrgent ? '#FF5252' : '#424242' }}
         >
-          {remainingMinutes}분
+          {remainText}
         </p>
       </div>
     </div>
