@@ -8,7 +8,7 @@ export const useChatMessages = (
   return useQuery<ChatMessagesResponse, Error>({
     queryKey: ['chatMessages', roomId],
     queryFn: () => fetchChatMessages(roomId),
-    staleTime: 1000 * 60 * 1,
+    staleTime: 0,
     enabled: !!roomId,
   });
 };
