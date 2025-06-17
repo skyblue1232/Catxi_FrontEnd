@@ -5,12 +5,12 @@ export const useReportUser = () => {
   return useMutation({
     mutationFn: ({
       roomId,
-      targetUserId,
+      targetUserEmail,
       reason,
     }: {
       roomId: number;
-      targetUserId: string;
+      targetUserEmail: string;
       reason: string;
-    }) => reportUser(roomId, targetUserId, reason),
+    }) => reportUser(roomId, targetUserEmail, reason),
   });
 };

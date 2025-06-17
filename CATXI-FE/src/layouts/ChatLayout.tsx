@@ -58,7 +58,7 @@ const ChatLayout = () => {
     return (
       <div className="flex justify-center items-center h-[90vh]">
         <div className="flex flex-col items-center gap-4 text-center">
-          <LogoText className="w-[140px] h-auto" />
+          <LogoText className="w-[10rem] h-auto" />
           <button
             onClick={() => navigate('/')}
             className="px-8 py-2 bg-[#8C46F6] text-white rounded-full shadow hover:bg-[#722de2] transition"
