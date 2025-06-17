@@ -17,7 +17,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifest: {
         short_name: "CATXI",
-        name: "CATXI | 대학교 택시 스팟",
+        name: "CATXI | 대학교 택시 동승자 매칭 서비스",
         icons: [
           {
             src: "/icon.png",
@@ -37,8 +37,8 @@ export default defineConfig({
         ],
         start_url: ".",
         display: "standalone",
-        theme_color: "#FEFEFE",
-        background_color: "#FEFEFE"
+        theme_color: "#FAFAFA",
+        background_color: "#FAFAFA"
       },
       workbox: {
         globPatterns: [
