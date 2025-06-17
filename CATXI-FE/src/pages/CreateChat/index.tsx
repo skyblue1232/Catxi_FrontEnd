@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Arrow from "../../assets/icons/arrow.svg?react";
 import SelectPlace from "./_components/SelectPlace";
 import clsx from "clsx";
@@ -27,6 +27,17 @@ const CreateChat = () => {
   ];
   const totalQuestions = 4;
   const progressWidth = `${(current / totalQuestions) * 100}%`;
+  useEffect(() => {
+    if (isTimePickerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isTimePickerOpen]);
   const handleMovePage = (offset: number) => {
     console.log(answers);
     const next = current + offset;
@@ -54,14 +65,16 @@ const CreateChat = () => {
   };
   const handleRouteMove = () => {
     if (startPoint) {
-      const isConfirmed = confirm(
+      const isConfirmed = window.confirm(
         "현재 입력하신 내용이 저장되지 않았습니다.\n페이지를 나가시겠어요?"
       );
       if (isConfirmed) {
         clearAnswer();
         navigate("/home");
       }
-    } else navigate("/home");
+    } else {
+      navigate("/home");
+    }
   };
   return (
     <div className="w-full h-full relative">
@@ -78,17 +91,16 @@ const CreateChat = () => {
         </div>
         <p className="font-regular text-xl font-medium">채팅방 생성</p>
       </div>
-      <div
-        className="w-full h-[calc(100vh-66px)] px-6.75 py-10 flex flex-col justify-between
-      "
-      >
-        {current < 3 && <SelectPlace type={current as 1 | 2} />}
-        {current == 3 && (
-          <SelectTime onOpen={() => setIsTimePickerOpen(true)} />
-        )}
-        {current == 4 && !allSet && <SelectMember />}
-        {allSet && <AllSet />}
-        <div className="flex flex-col gap-2.5">
+      <div className="w-full h-[calc(100vh-66px)] px-6.75 py-10 flex flex-col overflow-y-auto">
+        <div className="flex-1">
+          {current < 3 && <SelectPlace type={current as 1 | 2} />}
+          {current == 3 && (
+            <SelectTime onOpen={() => setIsTimePickerOpen(true)} />
+          )}
+          {current == 4 && !allSet && <SelectMember />}
+          {allSet && <AllSet />}
+        </div>
+        <div className="flex flex-col gap-2.5 mt-6">
           {current > 1 && (
             <button
               className="text-[#9E9E9E] font-normal text-xl cursor-pointer"
@@ -109,6 +121,7 @@ const CreateChat = () => {
           </button>
         </div>
       </div>
+
       {isTimePickerOpen && (
         <TimePicker onCancel={() => setIsTimePickerOpen(false)} />
       )}

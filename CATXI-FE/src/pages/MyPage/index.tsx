@@ -16,9 +16,9 @@ const MyPage = () => {
 
   const { membername, studentNo, matchCount } = data?.data || {};
   const handleDeleteUser = async () => {
-    const isConfirmed = confirm("회원 탈퇴를 진행하시겠습니까?");
+    const isConfirmed = window.confirm("회원 탈퇴를 진행하시겠습니까?");
     if (isConfirmed) {
-      await deleteUser();
+      deleteUser();
     }
   };
   const bottomRef = useRef(null);
