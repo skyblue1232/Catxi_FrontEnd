@@ -71,13 +71,14 @@ export function useChatConnection(roomId: number) {
   const handleReadyMessage = useCallback(
     (msg: ReadyMessage) => {
       console.log('[useChatConnection Ready 수신]', msg);
+      if (!email || !hostEmail) return;
 
       const senderName = nicknameMap[msg.senderEmail] || msg.senderEmail;
 
       openModal(
         <ReadyRequestModal
           senderName={senderName}
-          current={acceptCount} 
+          current={acceptCount}
           total={chatRoomDetail?.data.currentSize ?? 1}
           onAccept={handleAccept}
           onReject={() => rejectReady(roomId)}
@@ -87,13 +88,13 @@ export function useChatConnection(roomId: number) {
 
       setReadyMessages((prev) => [...prev, msg]);
     },
-    [nicknameMap, openModal, chatRoomDetail?.data.currentSize, acceptReady, rejectReady, roomId]
+    [nicknameMap, openModal, chatRoomDetail?.data.currentSize, acceptReady, rejectReady, roomId, email, hostEmail]
   );
 
   const { connect, disconnect, sendMessage } = useChatSocket(
     roomId,
     Storage.getAccessToken()!,
-    email,
+    email ?? '', 
     handleMessage,
     handleReadyMessage,
     nicknameMap
@@ -107,7 +108,7 @@ export function useChatConnection(roomId: number) {
 
   return {
     messages,
-    myEmail: email,
+    myEmail: email ?? '',
     sendMessage,
     readyMessages,
     nicknameMap,
@@ -118,4 +119,4 @@ export function useChatConnection(roomId: number) {
     isLoading,
     isError,
   };
-};
+}
