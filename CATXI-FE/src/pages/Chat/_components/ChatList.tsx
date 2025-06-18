@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo } from "react";
 import ChatItem from "./ChatItem";
 import JoinMessage from "./JoinMessage";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import type { ChatMessage } from "../../../types/chat/chat";
 
 interface ChatContext {
@@ -9,21 +9,31 @@ interface ChatContext {
 }
 
 interface Props {
-  messages: ChatMessage[]; 
+  messages: ChatMessage[];
 }
 
 const ChatList = ({ messages }: Props) => {
   const listRef = useRef<HTMLDivElement>(null);
   const { nicknameMap } = useOutletContext<ChatContext>();
+  const { roomId } = useParams();
 
   useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTo({
-        top: listRef.current.scrollHeight,
-        behavior: "smooth",
+    if (!listRef.current || !roomId) return;
+
+    const hasVisited = sessionStorage.getItem(`visited-${roomId}`);
+
+    const scrollToBottom = () => {
+      listRef.current!.scrollTo({
+        top: listRef.current!.scrollHeight,
+        behavior: hasVisited ? "smooth" : "auto",
       });
-    }
-  }, [messages]);
+    };
+
+    requestAnimationFrame(() => {
+      scrollToBottom();
+      sessionStorage.setItem(`visited-${roomId}`, "true");
+    });
+  }, [messages, roomId]);
 
   const renderedMessages = useMemo(() => {
     const seenEmails = new Set<string>();
@@ -60,7 +70,7 @@ const ChatList = ({ messages }: Props) => {
   return (
     <div
       ref={listRef}
-      className="flex-1 overflow-y-auto space-y-4 mb-[4.125rem] custom-scrollbar"
+      className="flex-1 overflow-y-auto space-y-5 mb-[1rem] pb-[1.25rem] custom-scrollbar"
     >
       {renderedMessages}
     </div>
