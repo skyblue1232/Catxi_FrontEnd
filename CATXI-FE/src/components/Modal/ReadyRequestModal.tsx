@@ -30,13 +30,14 @@ const ReadyRequestModal = ({
       setRemainingTime((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          closeModal();
+          setTimeout(() => {
+            closeModal();
 
-          if (!isHost) {
-            onReject();
-            navigate('/home');
-          }
-
+            if (!isHost) {
+              onReject();
+              navigate('/home');
+            }
+          }, 0);
           return 0;
         }
         return prev - 1;
@@ -45,8 +46,6 @@ const ReadyRequestModal = ({
 
     return () => clearInterval(timer);
   }, [onReject, isHost, closeModal, navigate]);
-
-
 
   const handleAccept = () => {
     onAccept();

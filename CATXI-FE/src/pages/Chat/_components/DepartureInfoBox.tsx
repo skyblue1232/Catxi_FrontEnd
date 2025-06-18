@@ -9,13 +9,12 @@ interface ChatContext {
   hostEmail: string;
   myEmail: string;
   chatRoom?: ChatRoomDetail;
+  refetchChatRoomDetail: () => Promise<any>;
 }
 
 const DepartureInfoBox = () => {
   const { roomId } = useParams();
-  const { myEmail, chatRoom, refetchChatRoomDetail } = useOutletContext<ChatContext & {
-    refetchChatRoomDetail: () => void;
-  }>();
+  const { myEmail, chatRoom, refetchChatRoomDetail } = useOutletContext<ChatContext>();
 
   const [_isRequested, setIsRequested] = useState(false);
   const { mutate } = useReadyRequest();
@@ -25,7 +24,9 @@ const DepartureInfoBox = () => {
 
     mutate(Number(roomId), {
       onSuccess: () => {
-        refetchChatRoomDetail();
+        if (typeof refetchChatRoomDetail === 'function') {
+          refetchChatRoomDetail();
+        }
         setIsRequested(true);
       }
     });
