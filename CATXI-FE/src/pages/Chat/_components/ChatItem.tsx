@@ -9,6 +9,7 @@ interface ChatContext {
   hostEmail: string;
   hostNickname: string;
   myEmail: string;
+  refetchChatRoomDetail: () => Promise<any>;
 }
 
 interface Props {
@@ -39,7 +40,7 @@ const formatTimestamp = (sentAt: string) => {
 
 const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
   const { openModal, closeModal } = useModal();
-  const { nicknameMap, hostEmail, myEmail } = useOutletContext<ChatContext>();
+  const { nicknameMap, hostEmail, myEmail, refetchChatRoomDetail } = useOutletContext<ChatContext>();
   const { roomId } = useParams();
   const { mutate: reportUser } = useReportUser();
   const { mutate: kickUser } = useKickUser();
@@ -72,6 +73,8 @@ const ChatItem = ({ message, isMe, email, sentAt }: Props) => {
       {
         onSuccess: () => {
           closeModal();
+
+          refetchChatRoomDetail();
           
           if (email === myEmail) {
           navigate("/home");
