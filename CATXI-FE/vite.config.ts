@@ -15,6 +15,9 @@ export default defineConfig({
     svgr(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true, 
+      },
       manifest: {
         short_name: "CATXI",
         name: "CATXI | 대학교 택시 스팟",

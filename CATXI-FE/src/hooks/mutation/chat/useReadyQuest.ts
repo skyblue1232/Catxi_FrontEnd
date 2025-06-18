@@ -5,6 +5,9 @@ import { queryClient } from '../../../App';
 export const useReadyRequest = () => {
   return useMutation({
     mutationFn: (roomId: number) => requestReady(roomId),
+    onSuccess: (roomId) => {
+      queryClient.invalidateQueries({ queryKey: ['chatRoomDetail', roomId] });
+    },
     onError: (error) => {
       console.error(error);
     },
@@ -14,8 +17,8 @@ export const useReadyRequest = () => {
 export const useReadyAccept = () => {
   return useMutation({
     mutationFn: (roomId: number) => acceptReady(roomId),
-    onSuccess: (variables) => {
-      queryClient.invalidateQueries({ queryKey: ['chatRoomDetail', variables] });
+    onSuccess: (roomId) => {
+      queryClient.invalidateQueries({ queryKey: ['chatRoomDetail', roomId] });
     },
   });
 };
@@ -23,8 +26,8 @@ export const useReadyAccept = () => {
 export const useReadyReject = () => {
   return useMutation({
     mutationFn: (roomId: number) => rejectReady(roomId),
-    onSuccess: (variables) => {
-      queryClient.invalidateQueries({ queryKey: ['chatRoomDetail', variables] });
+    onSuccess: (roomId) => {
+      queryClient.invalidateQueries({ queryKey: ['chatRoomDetail', roomId] });
     },
   });
 };
