@@ -17,8 +17,10 @@ export function useChatConnection(roomId: number) {
   const [acceptCount, setAcceptCount] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [readyMessages, setReadyMessages] = useState<ReadyMessage[]>([]);
+
   const { data: chatRoomDetail, isLoading, isError, refetch: refetchChatRoomDetail } = useChatRoomDetail(roomId);
   const { data: chatHistory } = useChatMessages(roomId);
+
   const { openModal } = useModal();
   const { mutate: acceptReady } = useReadyAccept();
   const { mutate: rejectReady } = useReadyReject();
@@ -94,20 +96,23 @@ export function useChatConnection(roomId: number) {
     [nicknameMap, openModal, chatRoomDetail?.data.currentSize, acceptReady, rejectReady, roomId, email, hostEmail]
   );
 
-  const { connect, disconnect, sendMessage } = useChatSocket(
+  const { connect, disconnect, sendMessage, isConnected } = useChatSocket(
     roomId,
     Storage.getAccessToken()!,
-    email ?? '', 
+    email ?? '',
     handleMessage,
     handleReadyMessage,
     nicknameMap
   );
 
+  const isReadyToConnect = email && hostEmail && Object.keys(nicknameMap).length > 0;
+
   useEffect(() => {
-    if (!roomId || !email) return;
+    if (!roomId || !isReadyToConnect) return;
+
     connect();
     return () => disconnect();
-  }, [roomId, email, connect, disconnect]);
+  }, [roomId, isReadyToConnect, connect, disconnect]);
 
   return {
     messages,
@@ -121,5 +126,6 @@ export function useChatConnection(roomId: number) {
     refetchChatRoomDetail,
     isLoading,
     isError,
+    isConnected,
   };
-}
+};

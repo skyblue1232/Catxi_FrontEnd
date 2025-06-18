@@ -21,6 +21,7 @@ const ChatLayout = () => {
     chatRoomDetail,
     isLoading,
     isError,
+    refetchChatRoomDetail,
   } = useChatConnection(parsedRoomId);
 
   useNavigationBlocker();
@@ -39,8 +40,9 @@ const ChatLayout = () => {
       hostNickname,
       chatRoom: chatRoomDetail,
       nicknameMap,
+      refetchChatRoomDetail,
     }),
-    [messages, myEmail, hostEmail, hostNickname, chatRoomDetail, nicknameMap]
+    [messages, myEmail, hostEmail, hostNickname, chatRoomDetail, nicknameMap, refetchChatRoomDetail]
   );
 
   if (!roomId || isLoading) {
