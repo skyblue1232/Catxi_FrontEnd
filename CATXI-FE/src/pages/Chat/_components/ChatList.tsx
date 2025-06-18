@@ -60,7 +60,7 @@ const ChatList = ({ messages }: Props) => {
   return (
     <div
       ref={listRef}
-      className="flex-1 overflow-y-auto space-y-4 mb-22 pb-[1.25rem] custom-scrollbar"
+      className="flex-1 overflow-y-auto space-y-4 mb-[4.125rem] custom-scrollbar"
     >
       {renderedMessages}
     </div>

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import CommonCard from "../../../components/Common/CommonCard";
 import ChatJoinButton from "./ChatJoinButton";
 import type { ChatRoomItem } from "../../../types/chat/chatData";
@@ -23,6 +24,8 @@ const ChatCard = ({ data }: Props) => {
     return name.substring(0, mid) + "*" + name.substring(mid + 1);
   };
 
+  const departText = getDepartText(data.departAt);
+
   return (
     <CommonCard size="default">
       <div className="rounded-lg p-[1.719rem] bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)] transition cursor-pointer">
@@ -35,9 +38,17 @@ const ChatCard = ({ data }: Props) => {
               매칭 성공 {data.matchCount}회
             </span>
           </div>
-          <span className="text-xs text-[#8C46F6] font-medium">
-            {getDepartText(data.departAt)}
-          </span>
+          {departText && (
+            <span
+              className={clsx(
+                'text-xs font-medium',
+                departText === '오늘 출발' && 'text-[#8C46F6]',
+                departText === '내일 출발' && 'text-[#3574FF]'
+              )}
+            >
+              {departText}
+            </span>
+          )}
         </div>
 
         <div className="w-full bg-[#E0E0E0] h-[1px] my-[0.938rem]" />
