@@ -7,11 +7,12 @@ const ChatPage = () => {
     <div className="w-full h-full flex flex-col">
       <TopStatusBar />
       <DepartureInfoBox />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-y-auto">
         <ChatBoard />
       </div>
     </div>
   );
 };
+
 
 export default ChatPage;
