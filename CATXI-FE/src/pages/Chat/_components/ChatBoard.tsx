@@ -14,7 +14,7 @@ const ChatBoard = () => {
   } = useOutletContext<ChatContext>();
 
   return (
-    <CommonCard className="flex flex-col h-[calc(100vh-220px)] w-full overflow-hidden">
+    <CommonCard className="flex flex-col h-[calc(100vh-380px)] w-full overflow-hidden">
       <ChatMessageList messages={messages} />
     </CommonCard>
   );
