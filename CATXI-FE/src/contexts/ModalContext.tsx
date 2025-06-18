@@ -2,7 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface ModalContextType {
   isOpen: boolean;
-  openModal: (content: ReactNode) => void;
+  openModal: (content: ReactNode, options?: { dismissible?: boolean }) => void;
   closeModal: () => void;
   content: ReactNode | null; 
 }
@@ -20,11 +20,13 @@ export const useModal = () => {
 export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [content, setContent] = useState<ReactNode | null>(null);
+  const [dismissible, setDismissible] = useState(true);
 
-  const openModal = (modalContent: ReactNode) => {
+  const openModal = (modalContent: ReactNode, options?: { dismissible?: boolean }) => {
     setContent(modalContent);
+    setDismissible(options?.dismissible ?? true);
     setIsOpen(true);
-  };
+  };  
 
   const closeModal = () => {
     setIsOpen(false);
@@ -37,7 +39,9 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
       {isOpen && content && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[1.656rem]"
-          onClick={closeModal}
+          onClick={() => {
+            if (dismissible) closeModal();
+          }}
         >
           <div
             className="bg-white p-6 rounded-[1rem] shadow-lg w-full max-w-md"
